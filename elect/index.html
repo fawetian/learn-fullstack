@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+  <body>
+    <h1>Hello Electron</h1>
+    <button id="ping">Ping 主进程</button>
+    <script>
+      // 点击按钮向主进程发送 ping 消息
+      document.getElementById('ping').addEventListener('click', () => {
+        window.electronAPI.send('ping', { time: Date.now() });
+      });
+      // 监听主进程回复的 pong 消息
+      window.electronAPI.on('pong', (msg) => alert('收到 pong: ' + JSON.stringify(msg)));
+    </script>
+  </body>
+</html>
