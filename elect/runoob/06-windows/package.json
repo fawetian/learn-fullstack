@@ -1,0 +1,12 @@
+{
+  "name": "electron-windows",
+  "version": "1.0.0",
+  "description": "Electron 窗口管理 - 启动画面、多窗口、模态对话框",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "latest"
+  }
+}

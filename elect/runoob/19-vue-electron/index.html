@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>Vue Electron Notes</title>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<style>
+  body { font-family: sans-serif; padding: 20px; max-width: 700px; margin: 0 auto; }
+  button { padding: 10px 20px; cursor: pointer; font-size: 16px; }
+  ul { list-style: none; padding: 0; }
+  li { background: #f5f7fa; padding: 15px; margin-bottom: 10px; border-radius: 8px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>笔记列表 (Vue)</h1>
+  <button @click="openNoteWindow">新建笔记</button>
+  <ul>
+    <li v-for="(note, index) in notes" :key="index">{{ note }}</li>
+  </ul>
+</div>
+
+<script>
+  const { createApp } = Vue;
+
+  createApp({
+    data() {
+      return { notes: [] }
+    },
+    methods: {
+      openNoteWindow() {
+        window.open('note.html', '新建笔记', 'width=400,height=300')
+      }
+    },
+    mounted() {
+      window.electronAPI.getNotes().then((notes) => {
+        this.notes = notes
+      })
+      window.electronAPI.onUpdateNotes((event, notes) => {
+        this.notes = notes
+      })
+    }
+  }).mount('#app')
+</script>
+</body>
+</html>

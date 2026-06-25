@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>文件系统操作</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; font-size: 16px; }
+    #output { border: 1px solid #ccc; padding: 15px; margin-top: 20px; min-height: 200px; white-space: pre-wrap; background: #f9f9f9; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Electron 文件系统操作</h1>
+  <button id="selectDir">选择目录</button>
+  <button id="readDir">读取目录</button>
+  <button id="writeFile">写入测试文件</button>
+  <button id="readFile">读取测试文件</button>
+  <div id="output"></div>
+  
+  <script>
+    let currentDir = '';
+    const output = document.getElementById('output');
+    
+    document.getElementById('selectDir').addEventListener('click', async () => {
+      const result = await window.fsAPI.selectDir();
+      if (!result.canceled) {
+        currentDir = result.filePaths[0];
+        output.textContent = '选中目录: ' + currentDir;
+      }
+    });
+    
+    document.getElementById('readDir').addEventListener('click', async () => {
+      if (!currentDir) { output.textContent = '先选择目录'; return; }
+      const files = await window.fsAPI.readDir(currentDir);
+      output.textContent = '目录内容:\n' + (Array.isArray(files) ? files.join('\n') : JSON.stringify(files));
+    });
+    
+    document.getElementById('writeFile').addEventListener('click', async () => {
+      if (!currentDir) { output.textContent = '先选择目录'; return; }
+      const filePath = currentDir + '/test-electron.txt';
+      const result = await window.fsAPI.writeFile(filePath, 'Hello from Electron!\n' + new Date());
+      output.textContent = result.success ? '写入成功: ' + filePath : '写入失败: ' + result.error;
+    });
+
+    document.getElementById('readFile').addEventListener('click', async () => {
+      if (!currentDir) { output.textContent = '先选择目录'; return; }
+      const filePath = currentDir + '/test-electron.txt';
+      const result = await window.fsAPI.readFile(filePath);
+      output.textContent = result.error
+        ? '读取失败: ' + result.error
+        : '文件内容:\n' + result.content;
+    });
+  </script>
+</body>
+</html>

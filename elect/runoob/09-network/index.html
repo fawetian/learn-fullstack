@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>网络通信示例</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    button { margin: 5px; padding: 10px 20px; cursor: pointer; }
+    #output { margin-top: 20px; border: 1px solid #ddd; padding: 15px; min-height: 200px; background: #f9f9f9; border-radius: 4px; }
+    .msg { margin: 5px 0; padding: 5px; background: #e3f2fd; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Electron 网络通信示例</h1>
+  
+  <button id="fetchBtn">获取 HTTP 数据</button>
+  <button id="wsBtn">连接 WebSocket</button>
+  <button id="setCookieBtn">设置 Cookie</button>
+  <button id="getCookieBtn">读取 Cookie</button>
+  
+  <div id="output"></div>
+  
+  <script>
+    const output = document.getElementById('output');
+    
+    // 辅助函数：添加消息到输出区域
+    function addMsg(text) {
+      const div = document.createElement('div');
+      div.className = 'msg';
+      div.textContent = text;
+      output.appendChild(div);
+    }
+    
+    // ===== HTTP 请求 =====
+    document.getElementById('fetchBtn').addEventListener('click', async () => {
+      const data = await window.electronAPI.fetchData();
+      addMsg('HTTP: ' + JSON.stringify(data).slice(0, 200));
+    });
+    
+    // ===== WebSocket =====
+    document.getElementById('wsBtn').addEventListener('click', async () => {
+      await window.electronAPI.connectWS();
+      addMsg('WebSocket 连接已建立');
+    });
+    
+    // 监听 WebSocket 消息（主进程转发）
+    window.electronAPI.onWSMessage(msg => {
+      addMsg('WS: ' + msg);
+    });
+    
+    // ===== Cookie =====
+    document.getElementById('setCookieBtn').addEventListener('click', async () => {
+      const res = await window.electronAPI.setCookie('token', 'abc123');
+      addMsg(res);
+    });
+    
+    document.getElementById('getCookieBtn').addEventListener('click', async () => {
+      const value = await window.electronAPI.getCookie('token');
+      addMsg('Cookie token: ' + value);
+    });
+  </script>
+</body>
+</html>

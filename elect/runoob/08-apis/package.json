@@ -1,0 +1,12 @@
+{
+  "name": "electron-apis-demo",
+  "version": "1.0.0",
+  "description": "Electron 常用 API - 交互式速查演示",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "latest"
+  }
+}

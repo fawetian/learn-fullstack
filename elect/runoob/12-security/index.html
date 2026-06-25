@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>安全演示</title>
+  <!--
+    CSP (Content Security Policy) - 内容安全策略
+    
+    限制页面可以加载的资源来源，防止 XSS 攻击：
+    - default-src 'self': 默认只允许同源资源
+    - script-src 'self': 只允许本地脚本，禁止内联脚本和外部脚本
+    - style-src 'self' 'unsafe-inline': 允许本地样式和内联样式
+    
+    注意：'unsafe-inline' 在生产环境应去掉，使用外部 CSS 文件。
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 700px; margin: 0 auto; }
+    button { padding: 10px 20px; cursor: pointer; }
+    #result { margin-top: 20px; padding: 15px; background: #f5f7fa; border-radius: 8px; }
+    .security-info { background: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>Electron 安全演示</h1>
+  
+  <div class="security-info">
+    <strong>安全配置：</strong>contextIsolation | sandbox | nodeIntegration=false | CSP<br>
+    <strong>输入验证：</strong>长度限制 &lt; 100，类型检查
+  </div>
+  
+  <input id="input" placeholder="输入内容（验证长度<100）" style="width:300px;padding:8px;">
+  <button id="btn">发送安全请求</button>
+  <div id="result"></div>
+  
+  <script>
+    document.getElementById('btn').addEventListener('click', async () => {
+      const val = document.getElementById('input').value;
+      try {
+        const res = await window.safeAPI.safeAction(val);
+        document.getElementById('result').textContent = res;
+        document.getElementById('result').style.background = '#e8f5e9';
+      } catch(e) {
+        document.getElementById('result').textContent = '错误: ' + e.message;
+        document.getElementById('result').style.background = '#ffebee';
+      }
+    });
+  </script>
+</body>
+</html>

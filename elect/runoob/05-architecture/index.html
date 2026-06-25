@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>文件管理器 - 架构演示</title>
+  <!--
+    渲染进程：文件管理器界面
+    
+    用户交互流程：
+    1. 点击"选择文件" → 调用 window.fileAPI.selectFile()
+    2. Preload 发送 IPC → 主进程打开 dialog.showOpenDialog()
+    3. 用户选择文件 → 结果返回给渲染进程
+    4. 点击"读取内容"（或自动）→ 调用 window.fileAPI.readFile(path)
+    5. Preload 发送 IPC → 主进程调用 fs.readFile()
+    6. 文件内容返回 → 显示在页面下方
+  -->
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .container { max-width: 800px; margin: 0 auto; }
+    button { padding: 10px 15px; margin: 5px; cursor: pointer; font-size: 16px; }
+    #content { 
+      border: 1px solid #ccc; 
+      padding: 15px; 
+      margin-top: 10px; 
+      min-height: 300px; 
+      white-space: pre-wrap;  /* 保留换行和空格 */
+      font-family: monospace;  /* 等宽字体，适合显示代码 */
+      background: #f9f9f9;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>简单文件管理器</h1>
+    <p>演示：渲染进程 → Preload → IPC → 主进程 → fs/dialog → 返回结果</p>
+    
+    <!-- 操作按钮 -->
+    <button id="selectBtn">选择文件</button>
+    <button id="clearBtn">清空内容</button>
+    
+    <!-- 状态显示：当前选中的文件路径 -->
+    <p id="filePath" style="color: #666; font-size: 14px;"></p>
+    
+    <!-- 文件内容展示区域 -->
+    <div>
+      <h3>文件内容：</h3>
+      <div id="content">请选择一个文件...</div>
+    </div>
+  </div>
+  
+  <script>
+    // 状态变量：保存当前选中的文件路径
+    let selectedFilePath = '';
+    
+    const selectBtn = document.getElementById('selectBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const contentDiv = document.getElementById('content');
+    const filePathEl = document.getElementById('filePath');
+    
+    /**
+     * 选择文件并读取内容
+     */
+    selectBtn.addEventListener('click', async () => {
+      // 步骤1：调用 Preload 暴露的 API 打开文件对话框
+      // 这会触发主进程的 dialog.showOpenDialog()
+      const result = await window.fileAPI.selectFile();
+      
+      // 用户取消了对话框
+      if (result.canceled) {
+        contentDiv.textContent = '用户取消了选择';
+        return;
+      }
+      
+      // 获取选中的文件路径（filePaths 是数组，取第一个）
+      selectedFilePath = result.filePaths[0];
+      filePathEl.textContent = '选中文件: ' + selectedFilePath;
+      
+      // 步骤2：调用 Preload 暴露的 API 读取文件内容
+      // 这会触发主进程的 fs.readFile()
+      const fileResult = await window.fileAPI.readFile(selectedFilePath);
+      
+      if (fileResult.success) {
+        // 读取成功：显示文件内容
+        contentDiv.textContent = '文件路径: ' + selectedFilePath + '\n\n' + fileResult.content;
+      } else {
+        // 读取失败：显示错误信息
+        contentDiv.textContent = '读取文件失败: ' + fileResult.error;
+      }
+    });
+    
+    clearBtn.addEventListener('click', () => {
+      contentDiv.textContent = '请选择一个文件...';
+      filePathEl.textContent = '';
+      selectedFilePath = '';
+    });
+  </script>
+</body>
+</html>

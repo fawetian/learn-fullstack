@@ -1,0 +1,12 @@
+{
+  "name": "my-electron-app",
+  "version": "1.0.0",
+  "description": "RUNOOB Electron 快速开始 - 第一个 Electron 应用",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "latest"
+  }
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>核心概念 - IPC Demo</title>
+  <!--
+    渲染进程界面：演示两种 IPC 通信模式
+    
+    注意：本页面运行在隔离上下文中（contextIsolation: true），
+    所以无法直接访问 require('electron') 或 ipcRenderer。
+    所有通信都通过 window.electronAPI（preload 暴露）进行。
+  -->
+</head>
+<body>
+  <h1>Electron 核心概念 - IPC 演示</h1>
+  
+  <!-- 按钮1：单向通信（send/on） -->
+  <button id="ping">发送 Ping（单向通信）</button>
+  <p id="pingResult" style="color: #666;"></p>
+  
+  <!-- 按钮2：双向通信（invoke/handle） -->
+  <button id="getPath">获取 App Path（双向通信）</button>
+  <p id="pathResult" style="color: #666;"></p>
+  
+  <script>
+    // ===== 单向通信演示 =====
+    
+    document.getElementById('ping').addEventListener('click', () => {
+      // 通过 preload 暴露的 API 发送消息
+      // 这会触发主进程的 ipcMain.on('ping', ...) 回调
+      window.electronAPI.sendPing('hello from renderer');
+      
+      document.getElementById('pingResult').textContent = 
+        'Ping 已发送！查看主进程控制台（终端）输出';
+    });
+    
+    // ===== 双向通信演示 =====
+    
+    document.getElementById('getPath').addEventListener('click', async () => {
+      // 通过 invoke 发送请求，await 等待返回值
+      // 这会触发主进程的 ipcMain.handle('get-app-path', ...) 回调
+      const path = await window.electronAPI.getAppPath();
+      
+      document.getElementById('pathResult').textContent = 
+        'App Path: ' + path;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>API 速查演示</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+    h3 { margin-top: 30px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+    button { margin: 5px; padding: 10px 20px; cursor: pointer; font-size: 14px; }
+    #output { border: 1px solid #ccc; padding: 15px; margin-top: 20px; min-height: 150px; background: #f9f9f9; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Electron 常用 API 演示</h1>
+  
+  <!-- Dialog 类 API -->
+  <h3>📂 Dialog（对话框）</h3>
+  <button id="openBtn">打开文件对话框</button>
+  <button id="saveBtn">保存文件对话框</button>
+  <button id="msgBtn">消息框</button>
+  
+  <!-- Clipboard 类 API -->
+  <h3>📋 Clipboard（剪贴板）</h3>
+  <button id="getClip">读取剪贴板</button>
+  <button id="setClip">写入剪贴板</button>
+  
+  <!-- Shell 类 API -->
+  <h3>🌐 Shell（系统外壳）</h3>
+  <button id="openUrl">打开外部链接</button>
+  
+  <!-- 输出区域 -->
+  <div id="output"></div>
+  
+  <script>
+    const output = document.getElementById('output');
+    
+    // ===== Dialog =====
+    
+    document.getElementById('openBtn').addEventListener('click', async () => {
+      const r = await window.apiDemo.showOpenDialog();
+      output.textContent = '打开文件: ' + (r.canceled ? '取消' : r.filePaths[0]);
+    });
+    
+    document.getElementById('saveBtn').addEventListener('click', async () => {
+      const r = await window.apiDemo.showSaveDialog();
+      output.textContent = '保存文件: ' + (r.canceled ? '取消' : r.filePath);
+    });
+    
+    document.getElementById('msgBtn').addEventListener('click', async () => {
+      await window.apiDemo.showMessageBox();
+      output.textContent = '消息框已显示';
+    });
+    
+    // ===== Clipboard =====
+    
+    document.getElementById('getClip').addEventListener('click', async () => {
+      const text = await window.apiDemo.getClipboard();
+      output.textContent = '剪贴板内容: ' + (text || '(空)');
+    });
+    
+    document.getElementById('setClip').addEventListener('click', async () => {
+      const res = await window.apiDemo.setClipboard('Hello from Electron API Demo!');
+      output.textContent = res;
+    });
+    
+    // ===== Shell =====
+    
+    document.getElementById('openUrl').addEventListener('click', async () => {
+      const res = await window.apiDemo.openExternal('https://www.electronjs.org');
+      output.textContent = res;
+    });
+  </script>
+</body>
+</html>

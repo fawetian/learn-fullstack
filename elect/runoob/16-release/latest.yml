@@ -1,0 +1,5 @@
+version: 1.0.2
+files:
+  - url: MyElectronApp-1.0.2.exe
+    sha512: "文件哈希值"
+releaseDate: "2025-10-15T00:00:00Z"

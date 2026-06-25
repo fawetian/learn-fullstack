@@ -1,0 +1,12 @@
+{
+  "name": "electron-security",
+  "version": "1.0.0",
+  "description": "Electron 安全 - 安全配置 / CSP / 输入验证",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "latest"
+  }
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>子窗口</title>
+  <!--
+    子窗口（模态对话框）
+    
+    特性：
+    - 父窗口：mainWindow（main.js 中 parent: mainWindow）
+    - 模态：modal: true，阻止与父窗口交互
+    - 必须先关闭此窗口才能操作主窗口
+  -->
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 100px; }
+  </style>
+</head>
+<body>
+  <h2>这是一个子窗口</h2>
+  <p>可以接收来自主窗口的指令</p>
+  <p style="color: #999; font-size: 14px;">
+    （尝试点击主窗口，会发现无法操作——这就是模态窗口的效果）
+  </p>
+</body>
+</html>

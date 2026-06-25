@@ -1,0 +1,12 @@
+{
+  "name": "electron-native-features",
+  "version": "1.0.0",
+  "description": "Electron 原生功能 - 菜单/托盘/对话框/通知/快捷键",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "latest"
+  }
+}

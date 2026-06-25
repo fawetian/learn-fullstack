@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>主窗口</title>
+  <!--
+    主窗口界面
+    
+    功能：
+    1. 展示应用信息（通过 IPC 从主进程获取）
+    2. 提供按钮打开子窗口（模态对话框）
+    
+    注意：此窗口初始隐藏（main.js show: false），
+    等页面加载完成后（ready-to-show 事件）才显示。
+  -->
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 100px; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    #info { color: #666; margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <h1>欢迎使用 Electron 应用</h1>
+  
+  <!-- 应用信息展示区：通过 IPC 从主进程获取 -->
+  <p id="info">正在获取应用信息...</p>
+  
+  <!-- 打开子窗口按钮 -->
+  <button id="open">打开子窗口</button>
+  
+  <script>
+    // ===== 获取并展示应用信息 =====
+    
+    /**
+     * 通过 invoke/handle 模式获取应用信息
+     * 这会触发主进程的 ipcMain.handle('get-app-info', ...)
+     */
+    window.electronAPI.getAppInfo().then(info => {
+      document.getElementById('info').textContent = 
+        '应用名称：' + info.name + ' ｜ 版本：' + info.version;
+    });
+    
+    // ===== 打开子窗口 =====
+    
+    document.getElementById('open').addEventListener('click', () => {
+      // 发送 IPC 消息给主进程，请求打开子窗口
+      // 这会触发主进程的 ipcMain.on('open-child', ...)
+      window.electronAPI.openChild();
+    });
+  </script>
+</body>
+</html>

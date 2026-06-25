@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Electron 简介 Demo</title>
+  <!-- 
+    这是渲染进程 (Renderer Process) 的界面文件。
+    渲染进程运行在 Chromium 浏览器环境中，负责显示 UI 和处理用户交互。
+    它通过预加载脚本暴露的 window.electronAPI 与主进程通信。
+  -->
+</head>
+<body>
+  <h1>Electron 简介 Demo</h1>
+  
+  <!-- 
+    按钮点击事件：
+    1. 调用 window.electronAPI.send('ping', data) 向主进程发送消息
+    2. 主进程通过 ipcMain.on('ping') 接收并回复 pong
+    3. 这里通过 window.electronAPI.on('pong') 监听回复并显示结果
+  -->
+  <button id="ping">Ping 主进程</button>
+  <p id="result"></p>
+  
+  <script>
+    // 获取 DOM 元素
+    const pingBtn = document.getElementById('ping');
+    const resultEl = document.getElementById('result');
+    
+    /**
+     * 点击按钮：发送 IPC 消息给主进程
+     * 
+     * window.electronAPI 是通过 preload.js 的 contextBridge 暴露的。
+     * 如果直接访问 window.require('electron') 会报错（因为 contextIsolation 和 nodeIntegration: false）。
+     */
+    pingBtn.addEventListener('click', () => {
+      // 发送 'ping' 消息，附带当前时间戳作为数据
+      // 这会触发主进程中 ipcMain.on('ping', ...) 的回调
+      window.electronAPI.send('ping', { time: Date.now() });
+      
+      resultEl.textContent = '等待主进程回复...';
+    });
+    
+    /**
+     * 监听主进程的 'pong' 回复
+     * 
+     * 主进程通过 event.reply('pong', data) 发送回复，
+     * 这里通过 preload.js 暴露的 on 函数注册监听器。
+     */
+    window.electronAPI.on('pong', (msg) => {
+      // 将收到的消息显示在页面上
+      resultEl.textContent = '收到 pong: ' + JSON.stringify(msg);
+    });
+  </script>
+</body>
+</html>

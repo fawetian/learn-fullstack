@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>菜鸟教程(runoob.com)</title>
+  <!--
+    这是 Electron 渲染进程 (Renderer Process) 的界面文件。
+    
+    渲染进程运行在 Chromium 环境中，所以你可以：
+    - 使用任何 HTML/CSS/JavaScript 技术
+    - 使用 Chrome 支持的 Web API（fetch, localStorage, IndexedDB 等）
+    - 引入 Vue/React/Angular 等前端框架（见 18/19 章节）
+    
+    但默认情况下不能直接访问 Node.js API（fs, path, require 等），
+    需要通过 Preload 脚本桥接（参考 01-intro）。
+  -->
+  <style>
+    /* 页面样式：完全由 CSS 控制，和写普通网页一样 */
+    body {
+      margin: 0;
+      display: flex;              /* 弹性布局，居中内容 */
+      align-items: center;
+      justify-content: center;
+      height: 100vh;              /* 占满整个视口高度 */
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f5f7fa;        /* 浅灰色背景 */
+    }
+    .box {
+      text-align: center;
+      background: white;
+      padding: 40px 60px;
+      border-radius: 12px;        /* 圆角 */
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);  /* 阴影效果 */
+    }
+    h1 {
+      margin: 0 0 10px;
+      color: #333;
+    }
+    p {
+      margin: 0;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <!-- 页面内容：一个居中的卡片 -->
+  <div class="box">
+    <h1>Hello, Electron!</h1>
+    <p>RUNOOB Electron 测试。这是你创建的第一个 Electron 桌面应用 🎉</p>
+  </div>
+</body>
+</html>

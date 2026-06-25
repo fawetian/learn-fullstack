@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>原生功能演示</title>
+  <!--
+    渲染进程：原生功能演示界面
+    
+    功能：
+    1. 按钮触发 IPC 显示对话框
+    2. 监听主进程发来的文件打开事件
+    3. 提示全局快捷键
+  -->
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    button { padding: 10px 20px; margin: 8px; font-size: 16px; cursor: pointer; }
+    #filePath { color: #666; font-size: 14px; margin: 20px; min-height: 20px; }
+    .hint { color: #999; font-size: 13px; margin-top: 40px; line-height: 1.8; }
+    .hint b { color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Electron 原生功能演示</h1>
+
+  <!-- 所有原生功能都做成页面按钮，点击即可在窗口内直接体验 -->
+  <p>
+    <button id="dialogBtn">显示对话框</button>
+    <button id="notifyBtn">显示通知</button>
+    <button id="aboutBtn">关于</button>
+    <button id="openFileBtn">打开文件</button>
+  </p>
+
+  <!-- 文件路径展示区：点"打开文件"或用菜单"工具 → 打开对话框"后显示 -->
+  <p id="filePath"></p>
+
+  <!-- 提示：菜单和托盘是系统级原生功能，不在网页内 -->
+  <p class="hint">
+    按 <b>Cmd/Ctrl+Shift+I</b> 打开开发者工具（全局快捷键，窗口失焦也生效）<br>
+    <b>应用菜单</b>：macOS 在屏幕顶部菜单栏（"文件"菜单会并入应用名菜单）；Windows/Linux 在窗口标题栏下方<br>
+    <b>系统托盘</b>：macOS 在屏幕右上角菜单栏，Windows 在右下角任务栏（图标为空白占位图）
+  </p>
+
+  <script>
+    // ===== 按钮触发各种原生功能（均通过 IPC 请求主进程执行） =====
+
+    // 主进程对话框
+    document.getElementById('dialogBtn').addEventListener('click', () => {
+      window.electronAPI.showDialog();
+    });
+
+    // 系统通知（右上角弹窗）
+    document.getElementById('notifyBtn').addEventListener('click', () => {
+      window.electronAPI.showNotification();
+    });
+
+    // "关于"对话框
+    document.getElementById('aboutBtn').addEventListener('click', () => {
+      window.electronAPI.showAbout();
+    });
+
+    // 打开文件对话框（结果通过下方 onFileOpened 回显）
+    document.getElementById('openFileBtn').addEventListener('click', () => {
+      window.electronAPI.openFile();
+    });
+
+    // ===== 监听文件打开事件 =====
+    
+    /**
+     * 监听主进程发来的 'file-opened' 事件
+     * 
+     * 当用户通过菜单"工具 → 打开对话框"选择文件后，
+     * 主进程通过 webContents.send('file-opened', path) 发送文件路径，
+     * 这里通过 preload 暴露的 onFileOpened 监听并显示路径。
+     */
+    window.electronAPI.onFileOpened(path => {
+      document.getElementById('filePath').textContent = '打开的文件路径：' + path;
+    });
+  </script>
+</body>
+</html>

@@ -45,3 +45,7 @@ coverage/
 # Electron
 # Compiled app output
 app/
+
+# Nested independent git repositories / large sub-projects
+claude-agent-desktop/
+elect/electron-samples/

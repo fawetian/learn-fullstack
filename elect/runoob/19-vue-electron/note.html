@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>新建笔记</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  textarea { width: 100%; height: 150px; }
+  button { padding: 10px 20px; cursor: pointer; }
+</style>
+</head>
+<body>
+  <h2>新建笔记</h2>
+  <textarea id="note" placeholder="写点什么..."></textarea><br>
+  <button id="saveBtn">保存</button>
+  <script>
+    const saveBtn = document.getElementById('saveBtn')
+    saveBtn.addEventListener('click', () => {
+      const note = document.getElementById('note').value
+      if (note.trim()) {
+        window.electronAPI.saveNote(note)
+        window.close()
+      }
+    })
+  </script>
+</body>
+</html>

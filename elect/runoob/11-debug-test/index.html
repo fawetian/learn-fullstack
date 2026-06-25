@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>调试测试</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    #info { background: #f5f7fa; padding: 20px; border-radius: 8px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h1>Electron 调试测试</h1>
+  <p>开发者工具已自动打开（F12 或 Cmd+Option+I）</p>
+  <div id="info"></div>
+  
+  <script>
+    // 显示从 Preload 暴露的进程信息
+    document.getElementById('info').innerHTML = '<pre>' + JSON.stringify({
+      platform: window.debugAPI.platform,
+      versions: window.debugAPI.versions
+    }, null, 2) + '</pre>';
+  </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>加载中...</title>
+  <!--
+    启动画面 (Splash Screen)
+    
+    设计要点：
+    - 无系统边框（main.js 中 frame: false）
+    - 透明背景（main.js 中 transparent: true）
+    - CSS 实现渐变背景和居中内容
+    - 不需要任何交互逻辑，纯静态展示
+  -->
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;                          /* 占满窗口 */
+      margin: 0;
+      background: linear-gradient(135deg, #8EC5FC, #E0C3FC);  /* 渐变背景 */
+      font-family: sans-serif;
+      /* 由于窗口是透明的，这里不需要额外设置透明 */
+    }
+    h1 {
+      font-size: 28px;
+      color: #333;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);  /* 文字阴影增加可读性 */
+    }
+  </style>
+</head>
+<body>
+  <h1>应用启动中，请稍候...</h1>
+</body>
+</html>

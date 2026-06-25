@@ -1,0 +1,17 @@
+appId: com.example.myelectronapp
+productName: MyElectronApp
+directories:
+  output: dist
+files:
+  - "main.js"
+  - "preload.js"
+  - "index.html"
+win:
+  target: nsis
+  icon: assets/icon.ico
+mac:
+  target: dmg
+  icon: assets/icon.icns
+linux:
+  target: AppImage
+  icon: assets/

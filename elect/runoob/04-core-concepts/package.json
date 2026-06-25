@@ -1,0 +1,12 @@
+{
+  "name": "electron-core-concepts",
+  "version": "1.0.0",
+  "description": "Electron 核心概念 - IPC 通信演示",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "latest"
+  }
+}
