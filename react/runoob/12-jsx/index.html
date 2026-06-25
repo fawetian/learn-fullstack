@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12-JSX - React JSX 语法演示</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; margin: 20px; line-height: 1.6; }
+  .section { border: 1px solid #ddd; margin: 20px 0; padding: 15px; border-radius: 8px; }
+  .section h2 { margin-top: 0; color: #333; }
+  pre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; }
+  .demo-box { background: #fafafa; padding: 10px; border-radius: 4px; margin-top: 10px; }
+</style>
+<!-- React 18 CDN -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<!-- Babel Standalone 用于浏览器内编译 JSX -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<h1>12-JSX - React JSX 语法演示</h1>
+<p>本页面将 JSX 代码片段整合为可运行的完整示例。打开浏览器控制台可查看日志。</p>
+
+<div class="section">
+  <h2>example_4: 自定义组件命名规则</h2>
+  <p>React 组件名必须以大写字母开头，否则会被当作普通 HTML 标签处理。</p>
+  <div id="demo4"></div>
+</div>
+
+<div class="section">
+  <h2>example_5: React Fragment（空标签）</h2>
+  <p>Fragment 允许组件返回多个元素，而不向 DOM 添加额外节点。</p>
+  <div id="demo5"></div>
+</div>
+
+<div class="section">
+  <h2>example_6: JSX 语法规则</h2>
+  <p>演示 className、自闭合标签、JSX 注释等基础规则。</p>
+  <div id="demo6"></div>
+</div>
+
+<div class="section">
+  <h2>example_7: JSX 中嵌入 JavaScript 表达式</h2>
+  <p>在 JSX 中使用 {} 包裹任意有效的 JavaScript 表达式。</p>
+  <div id="demo7"></div>
+</div>
+
+<div class="section">
+  <h2>example_8: 条件渲染</h2>
+  <p>使用三元运算符和逻辑与运算符进行条件渲染。</p>
+  <div id="demo8"></div>
+</div>
+
+<div class="section">
+  <h2>example_9: 列表渲染</h2>
+  <p>使用 map() 方法遍历数组渲染列表，key 属性必须唯一且稳定。</p>
+  <div id="demo9"></div>
+</div>
+
+<div class="section">
+  <h2>example_12: CSS Modules 样式导入</h2>
+  <p>演示 CSS Modules 用法（实际需构建工具支持，此处仅展示代码结构）。</p>
+  <pre><code>import styles from './styles/Card.module.css';</code></pre>
+</div>
+
+<div class="section">
+  <h2>example_14: 组件接收 props</h2>
+  <p>解构 props 并使用 CSS Modules。</p>
+  <div id="demo14"></div>
+</div>
+
+<div class="section">
+  <h2>example_15: JSX 中的注释</h2>
+  <p>JSX 注释使用 { /* 注释 */ } 语法。</p>
+  <div id="demo15"></div>
+</div>
+
+<div class="section">
+  <h2>example_16: JSX 必须有根元素</h2>
+  <p>JSX 表达式只能有一个根元素，多个元素必须用包裹元素或 Fragment 包裹。</p>
+  <div id="demo16"></div>
+</div>
+
+<div class="section">
+  <h2>example_17: 使用包裹元素作为根</h2>
+  <p>使用 section 等标签包裹多个子元素。</p>
+  <div id="demo17"></div>
+</div>
+
+<div class="section">
+  <h2>example_18: 错误的内联样式写法</h2>
+  <p>JSX 中 style 属性必须接收一个 JavaScript 对象，而非 CSS 字符串。</p>
+  <div id="demo18"></div>
+</div>
+
+<div class="section">
+  <h2>example_19: 正确的内联样式写法</h2>
+  <p>正确写法：style = {{ fontSize: 12 }}，外层 {} 是 JSX 表达式，内层 {} 是 JS 对象。</p>
+  <div id="demo19"></div>
+</div>
+
+<script type="text/babel">
+// =====================
+// example_4: 自定义组件命名规则
+// =====================
+function Card() {
+  return <p>✅ 正确：自定义组件 &lt;Card /&gt; 会被渲染</p>;
+}
+// 注意：如果写成 <card /> 会被当作 HTML 标签，不会渲染组件！
+
+const root4 = ReactDOM.createRoot(document.getElementById('demo4'));
+root4.render(<div><Card /></div>);
+
+// =====================
+// example_5: React Fragment
+// =====================
+function FragmentDemo() {
+  return (
+    <>
+      <h1>标题</h1>
+      <p>段落</p>
+    </>
+  );
+}
+const root5 = ReactDOM.createRoot(document.getElementById('demo5'));
+root5.render(<FragmentDemo />);
+
+// =====================
+// example_6: JSX 语法规则
+// =====================
+function SyntaxDemo() {
+  return (
+    <>
+      <h1 className="title">JSX 语法规则演示</h1>
+      <img src="https://via.placeholder.com/60" alt="示例图片" />
+      <br />
+      <p>注意 className 和闭合标签</p>
+    </>
+  );
+}
+const root6 = ReactDOM.createRoot(document.getElementById('demo6'));
+root6.render(<SyntaxDemo />);
+
+// =====================
+// example_7: JSX 嵌入表达式
+// =====================
+function ExpressionDemo() {
+  const name = 'runoob';
+  const now = new Date().toLocaleString();
+  return (
+    <div>
+      <h1>你好，{name}！</h1>
+      <p>当前时间：{now}</p>
+      <p>计算结果：{2 + 3 * 5}</p>  {/* 17 */}
+    </div>
+  );
+}
+const root7 = ReactDOM.createRoot(document.getElementById('demo7'));
+root7.render(<ExpressionDemo />);
+
+// =====================
+// example_8: 条件渲染
+// =====================
+function ConditionalDemo() {
+  const isLoggedIn = true;
+  const count = 0;
+  return (
+    <div>
+      {isLoggedIn ? <h1>欢迎回来！</h1> : <h1>请登录</h1>}
+      {count > 0 && <p>你有 {count} 条未读消息</p>}  {/* count 为 0 时不渲染 */}
+      <p>（count 当前为 0，因此不显示消息）</p>
+    </div>
+  );
+}
+const root8 = ReactDOM.createRoot(document.getElementById('demo8'));
+root8.render(<ConditionalDemo />);
+
+// =====================
+// example_9: 列表渲染
+// =====================
+function ListDemo() {
+  const items = [
+    { id: 1, name: '苹果' },
+    { id: 2, name: '香蕉' },
+    { id: 3, name: '橙子' },
+  ];
+  return (
+    <ul>
+      {items.map(item => (
+        <li key={item.id}>  {/* key 必须唯一且稳定！用于 React 虚拟 DOM 的 Diff 算法 */}
+          {item.name}
+        </li>
+      ))}
+    </ul>
+  );
+}
+const root9 = ReactDOM.createRoot(document.getElementById('demo9'));
+root9.render(<ListDemo />);
+
+// =====================
+// example_14: 组件接收 props（解构版）
+// =====================
+function Card14({ title, content, imageUrl }) {
+  return (
+    <div style={{ border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
+      {imageUrl && <img src={imageUrl} alt={title} style={{ maxWidth: '100px' }} />}
+      <h3>{title}</h3>
+      <p>{content}</p>
+    </div>
+  );
+}
+const root14 = ReactDOM.createRoot(document.getElementById('demo14'));
+root14.render(<Card14 title="卡片标题" content="卡片内容" />);
+
+// =====================
+// example_15: JSX 注释
+// =====================
+const root15 = ReactDOM.createRoot(document.getElementById('demo15'));
+root15.render(
+  <h1>孙朝阳 {/* JSX 行内注释 */}</h1>
+);
+
+// =====================
+// example_16: JSX 必须有根元素
+// =====================
+// 原始代码有两个根元素，会报错。此处已修正为使用 Fragment 包裹：
+const root16 = ReactDOM.createRoot(document.getElementById('demo16'));
+root16.render(
+  <>
+    <h1>这是修正后的例子</h1>
+    <span>假设这里是标题下面的内容</span>
+  </>
+);
+
+// =====================
+// example_17: 使用包裹元素作为根
+// =====================
+const root17 = ReactDOM.createRoot(document.getElementById('demo17'));
+root17.render(
+  <section>
+    <h1>这是正确的例子</h1>
+    <span>假设这里是标题下面的内容</span>
+  </section>
+);
+
+// =====================
+// example_18: 错误的内联样式（故意展示错误代码，实际运行已修正）
+// =====================
+// 错误写法：style = {fontSize:12} 会被当作 JS 块语句，而不是对象
+// 正确写法：style = {{fontSize:12}} 外层是 JSX 表达式，内层是 JS 对象
+const root18 = ReactDOM.createRoot(document.getElementById('demo18'));
+root18.render(
+  <p style={{fontSize: 12}}>正确写法：style = &#123;&#123; fontSize: 12 &#125;&#125;（已修正为可运行）</p>
+);
+
+// =====================
+// example_19: 正确的内联样式
+// =====================
+const root19 = ReactDOM.createRoot(document.getElementById('demo19'));
+root19.render(
+  <h1 style={{fontSize: 24, color: '#333'}}>菜鸟教程</h1>
+);
+</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+# ============================================
+# 17-packaging: 禁用 asar 的配置（调试/学习）
+# ============================================
+#
+# 禁用 asar 后，打包后的应用源码以普通文件形式存放，
+# 可以直接查看和修改（方便调试，但不保护源码）。
+#
+# 打包后查看源码位置：
+#   macOS: dist/mac/MyPackagingDemo.app/Contents/Resources/app/
+#   Windows: dist/win-unpacked/resources/app/
+#   Linux: dist/linux-unpacked/resources/app/
+#
+# 使用方式：
+#   npm run build:no-asar
+
+appId: com.example.packaging-demo
+productName: MyPackagingDemo
+
+directories:
+  output: dist-no-asar
+
+files:
+  - main.js
+  - preload.js
+  - index.html
+  - assets/**/*
+  - extra-resources/**/*
+
+# 关键：禁用 asar，源码不打包
+asar: false
+
+mac:
+  target: dmg
+
+win:
+  target: nsis
+
+linux:
+  target: AppImage

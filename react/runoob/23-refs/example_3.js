@@ -1,0 +1,1 @@
+<input type="text" ref={(node) => {this.myRef = node}} />

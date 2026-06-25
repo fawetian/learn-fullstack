@@ -1,0 +1,12 @@
+{
+  "name": "electron-file-manager",
+  "version": "1.0.0",
+  "description": "教程实战项目二：文件管理器（目录树 + 文件操作 + 拖拽）",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "latest"
+  }
+}

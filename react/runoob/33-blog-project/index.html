@@ -1,0 +1,22 @@
+<!--
+  33-blog-project: 入口 HTML 模板
+  来源章节: https://www.runoob.com/react/react-blog-project-init.html
+
+  这是 React 的 HTML 入口模板，作用是提供浏览器渲染的 DOM 挂载点。
+  需要注意：React 应用是挂载到 <div id="root"></div> 上的，由 src/main.jsx 负责创建根实例。
+-->
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React 博客项目</title>
+  </head>
+  <body>
+    <!-- 这是 React 的 DOM 挂载点，作用是作为 React 组件树的渲染根节点 -->
+    <div id="root"></div>
+    <!-- 这是 React 的模块入口脚本，Vite 会将 type="module" 的脚本按 ESM 方式加载 -->
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

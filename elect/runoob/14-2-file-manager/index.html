@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>文件管理器</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 顶部工具栏 -->
+  <div class="toolbar">
+    <button class="btn-primary" id="btnSelect">选择目录</button>
+    <button id="btnRefresh">刷新</button>
+    <button id="btnCreateFile">新建文件</button>
+    <button id="btnCreateDir">新建文件夹</button>
+    <div class="path-bar" id="pathBar">请选择目录...</div>
+    <input type="text" id="searchInput" placeholder="搜索...">
+    <select id="sortSelect">
+      <option value="name">名称</option>
+      <option value="size">大小</option>
+      <option value="mtime">修改时间</option>
+    </select>
+    <button id="btnPreview">预览</button>
+  </div>
+
+  <!-- 主内容区 -->
+  <div class="main">
+    <!-- 左侧：目录树 -->
+    <div class="tree-panel" id="treePanel">
+      <div class="empty-state">
+        <div>请选择目录</div>
+        <div class="hint">点击"选择目录"按钮开始浏览</div>
+      </div>
+    </div>
+
+    <!-- 中间：文件列表（拖拽区域） -->
+    <div class="file-panel">
+      <div class="drop-zone" id="dropZone">
+        <div class="empty-state" id="fileEmpty">
+          <div>暂无文件</div>
+          <div class="hint">选择目录或拖拽文件到此处</div>
+        </div>
+        <table class="file-table" id="fileTable" style="display:none">
+          <thead>
+            <tr>
+              <th>名称</th>
+              <th>大小</th>
+              <th>修改时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="fileTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 右侧：预览面板 -->
+    <div class="preview-panel" id="previewPanel">
+      <h4>文件预览</h4>
+      <div id="previewContent"></div>
+    </div>
+  </div>
+
+  <!-- 底部状态栏 -->
+  <div class="status-bar">
+    <span id="statusCount">0 个项目</span>
+    <span id="statusMsg">就绪</span>
+  </div>
+
+  <script>
+    /**
+     * 14-2-file-manager 渲染进程逻辑
+     *
+     * 数据模型：
+     * - rootPath: 当前浏览的根目录
+     * - currentDir: 当前选中的目录（显示文件列表）
+     * - files: 当前目录的文件列表
+     * - treeData: 目录树数据
+     *
+     * 拖拽流程：
+     * 1. 渲染进程 dragstart 记录被拖拽的文件路径
+     * 2. 拖拽到目标目录时，drop 事件获取目标目录路径
+     * 3. 调用 window.fsAPI.moveFile(source, target) 请求主进程移动
+     * 4. 刷新目标目录和源目录的文件列表
+     */
+
+    let rootPath = '';
+    let currentDir = '';
+    let allFiles = [];   // 当前目录的完整文件列表（数据源，搜索/排序不修改它）
+    let files = [];      // 用于渲染的列表（allFiles 过滤+排序后的结果）
+    let treeData = null;
+
+    const treePanel = document.getElementById('treePanel');
+    const dropZone = document.getElementById('dropZone');
+    const fileTable = document.getElementById('fileTable');
+    const fileTableBody = document.getElementById('fileTableBody');
+    const fileEmpty = document.getElementById('fileEmpty');
+    const pathBar = document.getElementById('pathBar');
+    const statusCount = document.getElementById('statusCount');
+    const statusMsg = document.getElementById('statusMsg');
+    const previewPanel = document.getElementById('previewPanel');
+    const previewContent = document.getElementById('previewContent');
+
+    // ===== 选择根目录 =====
+
+    document.getElementById('btnSelect').addEventListener('click', async () => {
+      const dir = await window.fsAPI.selectRoot();
+      if (!dir) return;
+      rootPath = dir;
+      currentDir = dir;
+      pathBar.textContent = dir;
+      await loadTree();
+      await loadFiles(dir);
+    });
+
+    document.getElementById('btnRefresh').addEventListener('click', async () => {
+      if (!currentDir) return;
+      await loadTree();
+      await loadFiles(currentDir);
+    });
+
+    // ===== 加载目录树 =====
+
+    async function loadTree() {
+      if (!rootPath) return;
+      statusMsg.textContent = '正在构建目录树...';
+      treeData = await window.fsAPI.buildTree(rootPath);
+      treePanel.innerHTML = '';  // 清空旧树（含初始空状态），避免重复追加
+      renderTree(treeData, treePanel);
+      statusMsg.textContent = '就绪';
+    }
+
+    function renderTree(node, container, level = 0) {
+      if (!node || node.error) return;
+
+      const item = document.createElement('div');
+      item.className = 'tree-item' + (node.path === currentDir ? ' active' : '');
+      item.style.paddingLeft = (8 + level * 12) + 'px';
+      item.draggable = true;
+      item.innerHTML = `<span class="icon">📁</span><span class="name">${escapeHtml(node.name)}</span>`;
+
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        currentDir = node.path;
+        pathBar.textContent = currentDir;
+        document.querySelectorAll('.tree-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        loadFiles(currentDir);
+      });
+
+      // 拖拽：目录作为 drop 目标
+      item.addEventListener('dragover', (e) => { e.preventDefault(); item.style.background = '#e3f2fd'; });
+      item.addEventListener('dragleave', () => { item.style.background = ''; });
+      item.addEventListener('drop', async (e) => {
+        e.preventDefault(); item.style.background = '';
+        const sourcePath = e.dataTransfer.getData('text/plain');
+        if (sourcePath && sourcePath !== node.path) {
+          await handleMove(sourcePath, node.path);
+        }
+      });
+
+      container.appendChild(item);
+
+      if (node.children && node.children.length > 0) {
+        const childrenContainer = document.createElement('div');
+        childrenContainer.className = 'tree-children';
+        node.children.forEach(child => renderTree(child, childrenContainer, level + 1));
+        container.appendChild(childrenContainer);
+      }
+    }
+
+    // ===== 加载文件列表 =====
+
+    async function loadFiles(dirPath) {
+      statusMsg.textContent = '正在读取...';
+      const result = await window.fsAPI.listFiles(dirPath);
+      if (result.error) {
+        statusMsg.textContent = '错误: ' + result.error;
+        return;
+      }
+      allFiles = Array.isArray(result) ? result : [];
+      applyFilterAndSort();
+      statusMsg.textContent = '就绪';
+    }
+
+    function renderFileList() {
+      if (files.length === 0) {
+        fileTable.style.display = 'none';
+        fileEmpty.style.display = 'flex';
+        return;
+      }
+      fileTable.style.display = 'table';
+      fileEmpty.style.display = 'none';
+
+      fileTableBody.innerHTML = files.map(f => `
+        <tr draggable="true" data-path="${escapeHtml(f.path)}">
+          <td>
+            <div class="file-name">
+              <span class="file-icon">${f.isDirectory ? '📁' : '📄'}</span>
+              <span>${escapeHtml(f.name)}</span>
+            </div>
+          </td>
+          <td>${f.isDirectory ? '-' : formatSize(f.size)}</td>
+          <td>${formatTime(f.mtime)}</td>
+          <td class="actions">
+            <button data-action="rename">重命名</button>
+            <button data-action="delete">删除</button>
+            ${!f.isDirectory ? `<button data-action="preview">查看</button>` : ''}
+          </td>
+        </tr>
+      `).join('');
+
+      // 绑定拖拽事件
+      fileTableBody.querySelectorAll('tr').forEach(row => {
+        row.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', row.dataset.path);
+          e.dataTransfer.effectAllowed = 'move';
+        });
+      });
+
+      statusCount.textContent = files.length + ' 个项目';
+    }
+
+    // 操作按钮通过事件委托处理，避免把文件路径拼进内联 onclick 字符串
+    fileTableBody.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const row = btn.closest('tr');
+      if (!row) return;
+      const filePath = row.dataset.path;  // 从 data 属性安全读取真实路径
+      const action = btn.dataset.action;
+      if (action === 'rename') renameFile(filePath);
+      else if (action === 'delete') deleteFile(filePath);
+      else if (action === 'preview') previewFile(filePath);
+    });
+
+    // ===== 拖拽区域 =====
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+
+      // 处理从外部拖拽的文件（HTML5 File API）
+      const externalFiles = e.dataTransfer.files;
+      if (externalFiles.length > 0) {
+        // 外部文件没有直接路径，需要额外处理（本示例简化）
+        alert('从外部拖拽文件功能需要额外实现文件复制');
+        return;
+      }
+
+      // 处理内部拖拽（文件列表 → 目录树）
+      const sourcePath = e.dataTransfer.getData('text/plain');
+      if (sourcePath && currentDir) {
+        await handleMove(sourcePath, currentDir);
+      }
+    });
+
+    // ===== 文件操作 =====
+
+    async function handleMove(sourcePath, targetDir) {
+      const res = await window.fsAPI.moveFile(sourcePath, targetDir);
+      if (res.error) {
+        alert('移动失败: ' + res.error);
+        return;
+      }
+      statusMsg.textContent = '已移动';
+      await loadFiles(currentDir);
+      await loadTree();  // 刷新目录树
+    }
+
+    document.getElementById('btnCreateFile').addEventListener('click', async () => {
+      if (!currentDir) return alert('请先选择目录');
+      const name = prompt('文件名:');
+      if (!name) return;
+      const res = await window.fsAPI.createFile(currentDir, name);
+      if (res.error) return alert('创建失败: ' + res.error);
+      await loadFiles(currentDir);
+      await loadTree();
+    });
+
+    document.getElementById('btnCreateDir').addEventListener('click', async () => {
+      if (!currentDir) return alert('请先选择目录');
+      const name = prompt('文件夹名:');
+      if (!name) return;
+      const res = await window.fsAPI.createDir(currentDir, name);
+      if (res.error) return alert('创建失败: ' + res.error);
+      await loadFiles(currentDir);
+      await loadTree();
+    });
+
+    window.deleteFile = async (filePath) => {
+      if (!confirm('确定删除?')) return;
+      const res = await window.fsAPI.deleteFile(filePath);
+      if (res.error) return alert('删除失败: ' + res.error);
+      await loadFiles(currentDir);
+      await loadTree();
+    };
+
+    window.renameFile = async (filePath) => {
+      const newName = prompt('新名称:');
+      if (!newName) return;
+      const res = await window.fsAPI.renameFile(filePath, newName);
+      if (res.error) return alert('重命名失败: ' + res.error);
+      await loadFiles(currentDir);
+      await loadTree();
+    };
+
+    window.previewFile = async (filePath) => {
+      const res = await window.fsAPI.readFileContent(filePath);
+      if (res.error) {
+        previewContent.innerHTML = '<p style="color:#d32f2f">无法预览: ' + escapeHtml(res.error) + '</p>';
+      } else {
+        previewContent.innerHTML = '<pre>' + escapeHtml(res.content.slice(0, 5000)) + '</pre>';
+      }
+      previewPanel.classList.add('visible');
+    };
+
+    document.getElementById('btnPreview').addEventListener('click', () => {
+      previewPanel.classList.toggle('visible');
+    });
+
+    // ===== 搜索和排序 =====
+
+    document.getElementById('searchInput').addEventListener('input', applyFilterAndSort);
+    document.getElementById('sortSelect').addEventListener('change', applyFilterAndSort);
+
+    function applyFilterAndSort() {
+      let list = [...allFiles];  // 始终从完整数据源派生，保证搜索/排序可逆
+      const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (keyword) {
+        list = list.filter(f => f.name.toLowerCase().includes(keyword));
+      }
+      const sortBy = document.getElementById('sortSelect').value;
+      list.sort((a, b) => {
+        if (a.isDirectory !== b.isDirectory) return a.isDirectory ? -1 : 1;
+        if (sortBy === 'name') return a.name.localeCompare(b.name);
+        if (sortBy === 'size') return (a.size || 0) - (b.size || 0);
+        if (sortBy === 'mtime') return (a.mtime || 0) - (b.mtime || 0);
+        return 0;
+      });
+      files = list;
+      renderFileList();
+    }
+
+    // ===== 辅助函数 =====
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatSize(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function formatTime(ts) {
+      if (!ts) return '';
+      const d = new Date(ts);
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+  </script>
+</body>
+</html>

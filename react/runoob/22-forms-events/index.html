@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>22-forms-events - React 表单处理演示</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 20px; }
+  .section { border: 1px solid #ddd; margin: 15px 0; padding: 15px; border-radius: 8px; }
+  h2 { margin-top: 0; color: #333; }
+  pre { background: #f5f5f5; padding: 10px; border-radius: 4px; }
+  input { padding: 6px 10px; margin: 5px 0; }
+  table { border-collapse: collapse; }
+  td { border: 1px solid #ddd; padding: 10px; vertical-align: top; }
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<h1>22-forms-events - React 表单处理演示</h1>
+
+<div class="section">
+  <h2>example_1: 受控组件与父子双向数据绑定</h2>
+  <p>演示父组件管理 state，子组件通过 props 接收 value 和 onChange 回调。</p>
+  <div id="f1"></div>
+</div>
+
+<script type="text/babel">
+// example_1: 受控组件与父子双向数据绑定
+// 受控组件：input 的 value 由 React state 控制，onChange 更新 state
+// 父子通信：父组件通过 props 将 state 和回调传递给子组件
+class HelloMessageChild extends React.Component {
+  render() {
+    return (
+      <div>
+        {/* 子组件通过 props 接收 value 和 onChange，实现受控组件 */}
+        <input type="text" value={this.props.myDataProp} onChange={this.props.updateStateProp} />
+        <h4>子组件显示：{this.props.myDataProp}</h4>
+      </div>
+    );
+  }
+}
+
+class HelloMessage extends React.Component {
+  constructor(props) {
+    super(props);
+    // 父组件统一管理所有状态
+    this.state = { value: '父组件', value1: '子组件' };
+    // 绑定事件处理方法的 this
+    this.handleChange = this.handleChange.bind(this);
+    this.handleChange1 = this.handleChange1.bind(this);
+  }
+
+  handleChange(event) {
+    // 通过 event.target.value 获取输入框最新值
+    this.setState({ value: event.target.value });
+  }
+
+  handleChange1(event) {
+    this.setState({ value1: event.target.value });
+  }
+
+  render() {
+    var value = this.state.value;
+    var value1 = this.state.value1;
+    return (
+      <div>
+        <table><tbody>
+          <tr>
+            <td>
+              {/* 父组件自身的受控 input */}
+              <input type="text" value={value} onChange={this.handleChange} />
+              <h4>父组件显示：{value}</h4>
+            </td>
+            <td>
+              {/* 子组件通过 props 接收数据，修改时调用父组件的回调 */}
+              <HelloMessageChild myDataProp={value1} updateStateProp={this.handleChange1} />
+            </td>
+          </tr>
+        </tbody></table>
+      </div>
+    );
+  }
+}
+ReactDOM.createRoot(document.getElementById('f1')).render(<HelloMessage />);
+</script>
+</body>
+</html>

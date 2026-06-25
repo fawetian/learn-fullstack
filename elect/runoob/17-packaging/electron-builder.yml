@@ -1,0 +1,39 @@
+# ============================================
+# 17-packaging: 基础打包配置（快速上手）
+# ============================================
+#
+# 这是最简单的 electron-builder 配置，适合快速体验打包。
+# 只包含最核心的字段，打包速度快，配置清晰。
+#
+# 使用方式：
+#   npx electron-builder
+# 或
+#   npm run build
+#
+# 输出目录：dist/
+
+appId: com.example.packaging-demo
+productName: MyPackagingDemo
+
+directories:
+  output: dist
+
+files:
+  - main.js
+  - preload.js
+  - index.html
+  - assets/**/*
+  - extra-resources/**/*
+
+# asar: true 是默认值，启用源码归档保护
+asar: true
+
+# 平台配置：只打单格式
+mac:
+  target: dmg
+
+win:
+  target: nsis
+
+linux:
+  target: AppImage

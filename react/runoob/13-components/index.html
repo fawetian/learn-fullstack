@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>13-components - React 组件演示</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 20px; }
+  .section { border: 1px solid #ddd; margin: 15px 0; padding: 15px; border-radius: 8px; }
+  h2 { margin-top: 0; color: #333; }
+  pre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; }
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<h1>13-components - React 组件演示</h1>
+
+<div class="section">
+  <h2>example_1: 最简单的函数组件</h2>
+  <div id="c1"></div>
+</div>
+
+<div class="section">
+  <h2>example_3: 函数组件的三种写法</h2>
+  <div id="c3"></div>
+</div>
+
+<div class="section">
+  <h2>example_5: 基础函数组件（无 props）</h2>
+  <div id="c5"></div>
+</div>
+
+<div class="section">
+  <h2>example_6: 基础类组件</h2>
+  <div id="c6"></div>
+</div>
+
+<div class="section">
+  <h2>example_7: 父组件传递 props</h2>
+  <div id="c7"></div>
+</div>
+
+<div class="section">
+  <h2>example_8: 解构 props 与默认值</h2>
+  <div id="c8"></div>
+</div>
+
+<div class="section">
+  <h2>example_9: 多种类型的 props</h2>
+  <div id="c9"></div>
+</div>
+
+<div class="section">
+  <h2>example_10: props.children（插槽）</h2>
+  <div id="c10"></div>
+</div>
+
+<script type="text/babel">
+// example_1: 最简单的函数组件
+// 函数组件本质上是一个接收 props 并返回 JSX 的纯函数
+function Hello() {
+  return <h1>Hello, World!</h1>;
+}
+ReactDOM.createRoot(document.getElementById('c1')).render(<Hello />);
+
+// example_3: 函数组件的三种写法
+// 方式1：函数声明（最常用，支持函数名提升）
+function Welcome1(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+// 方式2：箭头函数（适合简单逻辑，自动绑定外层 this）
+const Welcome2 = (props) => {
+  return <h1>Hello, {props.name}</h1>;
+};
+// 方式3：简化箭头函数（单行返回，省略 return 和 {}）
+const Welcome3 = (props) => <h1>Hello, {props.name}</h1>;
+
+function C3() {
+  return (
+    <div>
+      <Welcome1 name="函数声明" />
+      <Welcome2 name="箭头函数" />
+      <Welcome3 name="简化箭头" />
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('c3')).render(<C3 />);
+
+// example_5: 基础函数组件（无 props）
+function HelloMessage(props) {
+  return <h1>Hello World!</h1>;
+}
+ReactDOM.createRoot(document.getElementById('c5')).render(<HelloMessage />);
+
+// example_6: 基础类组件
+// 类组件需要继承 React.Component，并实现 render() 方法返回 JSX
+class WelcomeClass extends React.Component {
+  render() {
+    return <h1>Hello World!（类组件）</h1>;
+  }
+}
+ReactDOM.createRoot(document.getElementById('c6')).render(<WelcomeClass />);
+
+// example_7: 父组件传递 props
+// Props 是父组件向子组件传递数据的单向数据流（read-only）
+function Greeting(props) {
+  return (
+    <div>
+      <h1>Hello, {props.name}!</h1>
+      <p>Age: {props.age}</p>
+    </div>
+  );
+}
+function App7() {
+  return (
+    <div>
+      <Greeting name="Alice" age={25} />
+      <Greeting name="Bob" age={30} />
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('c7')).render(<App7 />);
+
+// example_8: 解构 props 与默认值
+// 解构让代码更简洁；默认值在未传入对应 prop 时生效
+function Greeting8({ name, age }) {
+  return (
+    <div>
+      <h1>Hello, {name}!</h1>
+      <p>Age: {age}</p>
+    </div>
+  );
+}
+function Button({ text = "Submit", variant = "primary", disabled = false }) {
+  return (
+    <button style={{ opacity: disabled ? 0.5 : 1 }} disabled={disabled}>
+      {text}
+    </button>
+  );
+}
+function App8() {
+  return (
+    <div>
+      <Greeting8 name="Carol" age={22} />
+      <Button text="保存" variant="secondary" />
+      <Button disabled />
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('c8')).render(<App8 />);
+
+// example_9: 多种类型的 props
+// props 可以传递字符串、数字、布尔值、数组、对象、函数、JSX
+function MyComponent({ title, count, isActive, items, user, onClick, children }) {
+  return (
+    <div style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
+      <h3>{title}</h3>
+      <p>Count: {count}</p>
+      <p>Active: {isActive ? 'Yes' : 'No'}</p>
+      <p>Items: {items.join(', ')}</p>
+      <p>User: {user.name}, Age: {user.age}</p>
+      <button onClick={onClick}>Click me</button>
+      <div style={{ marginTop: '10px', background: '#f9f9f9', padding: '5px' }}>{children}</div>
+    </div>
+  );
+}
+function Demo() {
+  const user = { name: "Alice", age: 25 };
+  const numbers = [1, 2, 3, 4, 5];
+  const handleClick = () => alert("Clicked!");
+  return (
+    <MyComponent
+      title="Hello"
+      count={42}
+      isActive={true}
+      items={numbers}
+      user={user}
+      onClick={handleClick}
+    >
+      <p>This is content (JSX children)</p>
+    </MyComponent>
+  );
+}
+ReactDOM.createRoot(document.getElementById('c9')).render(<Demo />);
+
+// example_10: props.children（插槽/内容分发）
+// props.children 表示组件标签体中的内容，类似于 Vue 的插槽
+function Card10({ children, title }) {
+  return (
+    <div style={{ border: '1px solid #999', borderRadius: '6px', padding: '10px', margin: '10px 0' }}>
+      {title && <h2>{title}</h2>}
+      <div style={{ background: '#fafafa', padding: '8px' }}>{children}</div>
+    </div>
+  );
+}
+function App10() {
+  return (
+    <Card10 title="My Card">
+      <p>This is the card content</p>
+      <button>Click me</button>
+    </Card10>
+  );
+}
+ReactDOM.createRoot(document.getElementById('c10')).render(<App10 />);
+</script>
+</body>
+</html>

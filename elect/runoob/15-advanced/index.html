@@ -21,6 +21,8 @@
   
   <div class="section">
     <h3>多窗口广播</h3>
+    <p>先点"打开新窗口"开多个窗口，再在任意窗口广播，其他窗口会收到消息</p>
+    <button id="newWinBtn">打开新窗口</button>
     <input id="msg" placeholder="广播消息" style="width:200px;padding:5px;">
     <button id="broadcastBtn">广播</button>
   </div>
@@ -40,6 +42,11 @@
       output.textContent = '协议 URL: ' + url;
     });
     
+    document.getElementById('newWinBtn').addEventListener('click', async () => {
+      const res = await window.advancedAPI.createWindow();
+      output.textContent = res;
+    });
+
     document.getElementById('broadcastBtn').addEventListener('click', async () => {
       const msg = document.getElementById('msg').value || 'Hello!';
       const res = await window.advancedAPI.broadcast(msg);
@@ -48,8 +55,7 @@
     
     // 监听广播消息
     window.advancedAPI.onBroadcast((message) => {
-      output.textContent = '【收到广播】' + message + '
-' + output.textContent;
+      output.textContent = '【收到广播】' + message + '\n' + output.textContent;
     });
   </script>
 </body>

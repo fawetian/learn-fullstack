@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>Electron 打包配置演示</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+    .card { background: #f5f7fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    .card h3 { margin-top: 0; color: #1976d2; }
+    .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e0e0e0; font-size: 14px; }
+    .row:last-child { border-bottom: none; }
+    .label { font-weight: bold; color: #555; flex: 0 0 200px; }
+    .value { font-family: monospace; color: #333; text-align: right; word-break: break-all; flex: 1; }
+    .value.code { color: #d32f2f; }
+    .value.path { color: #388e3c; }
+    button { padding: 10px 20px; cursor: pointer; margin: 5px; font-size: 15px; border: none; border-radius: 4px; }
+    .btn-primary { background: #1976d2; color: white; }
+    .btn-secondary { background: #e0e0e0; color: #333; }
+    .btn-success { background: #388e3c; color: white; }
+    .output { background: #fff3e0; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: monospace; white-space: pre-wrap; min-height: 50px; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 10px; }
+    .badge.dev { background: #ffebee; color: #c62828; }
+    .badge.pkg { background: #e8f5e9; color: #2e7d32; }
+    .commands { background: #263238; color: #aed581; padding: 20px; border-radius: 4px; font-family: monospace; overflow-x: auto; }
+    .commands h4 { color: #fff; margin-top: 0; }
+    .commands .comment { color: #78909c; }
+    .commands .cmd { color: #ffcb6b; }
+  </style>
+</head>
+<body>
+  <h1>Electron 打包配置深度演示</h1>
+
+  <div class="card">
+    <h3>环境信息 <span id="modeBadge" class="badge">检测中...</span></h3>
+    <div id="envInfo">加载中...</div>
+  </div>
+
+  <div class="card">
+    <h3>外部资源（extraResources 演示）</h3>
+    <p>打包后，extra-resources/ 目录下的文件被放在 asar 外部，可以通过 process.resourcesPath 访问。</p>
+    <button class="btn-success" id="readResource">读取外部资源文件</button>
+    <div id="resourceOutput" class="output">点击按钮读取 extra-resources/demo.txt</div>
+  </div>
+
+  <div class="card">
+    <h3>打包命令</h3>
+    <div class="commands">
+      <h4>基础打包</h4>
+      <span class="comment"># 使用默认配置（electron-builder.yml）打包当前平台</span>
+      <span class="cmd">npm run build</span>
+
+      <h4>完整配置打包</h4>
+      <span class="comment"># 使用完整配置（多平台/多格式/图标）</span>
+      <span class="cmd">npm run build:full</span>
+
+      <h4>指定平台</h4>
+      <span class="cmd">npm run build:mac</span>
+      <span class="cmd">npm run build:win</span>
+      <span class="cmd">npm run build:linux</span>
+
+      <h4>不打包 asar（源码可见）</h4>
+      <span class="comment"># 打包后可在 dist/win-unpacked/resources/app/ 直接看到源码</span>
+      <span class="cmd">npm run build:no-asar</span>
+    </div>
+  </div>
+
+  <script>
+    async function loadEnvInfo() {
+      const info = await window.packagingAPI.getEnvInfo();
+      const badge = document.getElementById('modeBadge');
+      if (info.isPackaged) {
+        badge.textContent = '打包模式';
+        badge.className = 'badge pkg';
+      } else {
+        badge.textContent = '开发模式';
+        badge.className = 'badge dev';
+      }
+
+      const html = `
+        <div class="row"><span class="label">应用版本</span><span class="value">${info.version}</span></div>
+        <div class="row"><span class="label">是否打包</span><span class="value code">${info.isPackaged}</span></div>
+        <div class="row"><span class="label">asar 启用</span><span class="value code">${info.asarEnabled}</span></div>
+        <div class="row"><span class="label">平台</span><span class="value">${info.platform}</span></div>
+        <div class="row"><span class="label">__dirname</span><span class="value path">${info.__dirname}</span></div>
+        <div class="row"><span class="label">resourcesPath</span><span class="value path">${info.resourcesPath}</span></div>
+        <div class="row"><span class="label">userData</span><span class="value path">${info.userDataPath}</span></div>
+        <div class="row"><span class="label">外部资源路径</span><span class="value path">${info.extraResourcePath}</span></div>
+        <div class="row"><span class="label">外部资源文件</span><span class="value">${info.extraFiles.join(', ') || '无'}</span></div>
+      `;
+      document.getElementById('envInfo').innerHTML = html;
+    }
+
+    loadEnvInfo();
+
+    document.getElementById('readResource').addEventListener('click', async () => {
+      const output = document.getElementById('resourceOutput');
+      output.textContent = '读取中...';
+      const res = await window.packagingAPI.readExtraResource('demo.txt');
+      if (res.error) {
+        output.textContent = '错误: ' + res.error + '
+
+提示：在 extra-resources/ 目录创建 demo.txt 文件后重试';
+        output.style.background = '#ffebee';
+      } else {
+        output.textContent = '文件内容:
+' + res.content;
+        output.style.background = '#e8f5e9';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -15,7 +15,7 @@
  * 注意：自定义协议需要在打包安装后才生效，开发时无法直接测试。
  */
 
-const { app, BrowserWindow, ipcMain, protocol } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -73,13 +73,6 @@ function createWindow() {
  */
 app.setAsDefaultProtocolClient('myapp');
 
-// 注册自定义协议处理（开发模式下）
-// 生产环境使用 app.setAsDefaultProtocolClient
-protocol.registerHttpProtocol('myapp', (request, callback) => {
-  console.log('收到自定义协议请求:', request.url);
-  callback({ url: request.url });
-});
-
 app.whenReady().then(() => {
   createWindow();
   
@@ -122,6 +115,12 @@ ipcMain.handle('broadcast', (event, message) => {
     }
   });
   return '广播已发送给 ' + (allWindows.length - 1) + ' 个窗口';
+});
+
+// IPC: 打开新窗口（用于演示多窗口广播）
+ipcMain.handle('create-window', () => {
+  const win = createWindow();
+  return '新窗口已创建，ID: ' + win.id;
 });
 
 ipcMain.handle('get-protocol-url', () => {

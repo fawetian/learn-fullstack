@@ -1,0 +1,15 @@
+return (
+  <div
+    style={{
+      backgroundColor: '#f0f0f0',
+      padding: '20px',
+      borderRadius: '8px',
+      textAlign: 'center',
+      fontFamily: 'Arial, sans-serif',
+    }}
+  >
+    <h2 style={{ color: 'blue', marginBottom: '10px' }}>
+      内联样式示例
+    </h2>
+  </div>
+);

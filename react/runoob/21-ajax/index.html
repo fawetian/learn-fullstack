@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>21-ajax - React AJAX 数据请求演示</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 20px; }
+  .section { border: 1px solid #ddd; margin: 15px 0; padding: 15px; border-radius: 8px; }
+  h2 { margin-top: 0; color: #333; }
+  pre { background: #f5f5f5; padding: 10px; border-radius: 4px; }
+  button { padding: 8px 16px; cursor: pointer; }
+  .loading { color: #666; }
+  .error { color: red; }
+</style>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<h1>21-ajax - React AJAX 数据请求演示</h1>
+
+<div class="section">
+  <h2>example_1: jQuery AJAX + 传统 this 绑定</h2>
+  <p>使用 jQuery 的 $.ajax 发送请求，在回调中通过变量保存 this 引用。</p>
+  <div id="a1"></div>
+</div>
+
+<div class="section">
+  <h2>example_2: jQuery AJAX + 箭头函数绑定</h2>
+  <p>使用箭头函数自动绑定外层 this，无需 that 变量。</p>
+  <div id="a2"></div>
+</div>
+
+<div class="section">
+  <h2>example_3: jQuery AJAX + 列表数据渲染</h2>
+  <p>获取多个数据项并渲染为列表。</p>
+  <div id="a3"></div>
+</div>
+
+<div class="section">
+  <h2>example_4: 完整的内联 AJAX（使用 babel 编译）</h2>
+  <p>使用 jQuery $.get 获取数据，注意 bind(this) 的使用。</p>
+  <div id="a4"></div>
+</div>
+
+<div class="section">
+  <h2>example_5: fetch API（现代推荐写法）</h2>
+  <p>使用原生 fetch API，更现代，无需额外库。</p>
+  <div id="a5"></div>
+</div>
+
+<script type="text/babel">
+// example_1: jQuery AJAX + 传统 this 绑定
+// 类组件中，AJAX 回调内 this 指向改变，需要用变量保存组件实例引用
+class UserGist1 extends React.Component {
+  constructor(props) {
+    super(props);
+    // state 初始值：username 和 lastGistUrl 为空字符串
+    this.state = { username: '', lastGistUrl: '' };
+  }
+
+  componentDidMount() {
+    // 生命周期：组件挂载后发起 AJAX 请求
+    var that = this; // 保存组件实例引用，因为 AJAX 回调内 this 指向 jqXHR 对象
+    this.serverRequest = $.ajax({
+      url: this.props.source,
+      type: "GET",
+      dataType: 'jsonp',
+      success: function (result) {
+        console.log(result.data);
+        var lastGist = result.data[0];
+        // 通过 that 调用 setState，因为此处 this 不是组件实例
+        that.setState({
+          username: lastGist.owner.login,
+          lastGistUrl: lastGist.html_url
+        });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    // 卸载组件时中止请求，防止内存泄漏和 setState 警告
+    this.serverRequest.abort();
+  }
+
+  render() {
+    return (
+      <div>
+        {this.state.username} 用户最新的 Gist 共享地址：
+        <a href={this.state.lastGistUrl} target="_blank" rel="nofollow">{this.state.lastGistUrl}</a>
+      </div>
+    );
+  }
+}
+ReactDOM.createRoot(document.getElementById('a1')).render(
+  <UserGist1 source="https://api.github.com/users/octocat/gists" />
+);
+
+// example_2: jQuery AJAX + 箭头函数绑定
+// 箭头函数自动绑定外层 this，无需 that 变量
+class UserGist2 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { username: '', lastGistUrl: '' };
+  }
+
+  componentDidMount() {
+    this.serverRequest = $.get(this.props.source, (result) => {
+      var lastGist = result[0];
+      // 箭头函数继承外层 this（即组件实例），可直接使用 this.setState
+      this.setState({
+        username: lastGist.owner.login,
+        lastGistUrl: lastGist.html_url
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    this.serverRequest.abort();
+  }
+
+  render() {
+    return (
+      <div>
+        {this.state.username} 用户最新的 Gist 共享地址：
+        <a href={this.state.lastGistUrl} target="_blank" rel="nofollow">{this.state.lastGistUrl}</a>
+      </div>
+    );
+  }
+}
+ReactDOM.createRoot(document.getElementById('a2')).render(
+  <UserGist2 source="https://api.github.com/users/octocat/gists" />
+);
+
+// example_3: jQuery AJAX + 列表数据渲染
+class UserGist3 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { username: [], lastGistUrl: [] };
+  }
+
+  componentDidMount() {
+    this.serverRequest = $.get(this.props.source, function (result) {
+      var lastGist = result;
+      var users = [];
+      var urls = [];
+      lastGist.map(function (item) {
+        users.push(item.owner.login);
+        urls.push(item.html_url);
+      });
+      this.setState({
+        username: users,
+        lastGistUrl: urls
+      });
+    }.bind(this)); // 使用 bind(this) 将回调函数的 this 绑定到组件实例
+  }
+
+  componentWillUnmount() {
+    this.serverRequest.abort();
+  }
+
+  render() {
+    var users = this.state.username;
+    var urls = this.state.lastGistUrl;
+    return (
+      <ul>
+        {users.map(function (user, index) {
+          return (
+            <li key={index}>
+              {user} - <a href={urls[index]} target="_blank" rel="nofollow">{urls[index]}</a>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
+}
+ReactDOM.createRoot(document.getElementById('a3')).render(
+  <UserGist3 source="https://api.github.com/users/octocat/gists" />
+);
+
+// example_4: 完整的内联 AJAX（使用 babel 编译）
+class UserGist4 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { username: '', lastGistUrl: '', source: 'https://api.github.com/users/octocat/gists' };
+  }
+
+  componentDidMount() {
+    this.serverRequest = $.get(this.state.source, function (result) {
+      var lastGist = result[0];
+      this.setState({
+        username: lastGist.owner.login,
+        lastGistUrl: lastGist.html_url
+      });
+    }.bind(this));
+  }
+
+  componentWillUnmount() {
+    this.serverRequest.abort();
+  }
+
+  render() {
+    return (
+      <div>
+        {this.state.username} 用户最新的 Gist 共享地址：
+        <a href={this.state.lastGistUrl} target="_blank" rel="nofollow">{this.state.lastGistUrl}</a>
+      </div>
+    );
+  }
+}
+ReactDOM.createRoot(document.getElementById('a4')).render(<UserGist4 />);
+
+// example_5: fetch API（现代推荐写法）
+// 使用原生 fetch API，配合 Promise 和 async/await，无需 jQuery
+class UserGist5 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { username: '', lastGistUrl: '' };
+  }
+
+  componentDidMount() {
+    fetch(this.props.source)
+      .then(response => response.json()) // 将响应解析为 JSON
+      .then(result => {
+        let lastGist = result[0];
+        this.setState({
+          username: lastGist.owner.login,
+          lastGistUrl: lastGist.html_url
+        });
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
+        this.setState({ username: '加载失败' });
+      });
+  }
+
+  render() {
+    return (
+      <div>
+        {this.state.username || '加载中...'} 用户最新的 Gist 共享地址：
+        <a href={this.state.lastGistUrl} target="_blank" rel="nofollow">{this.state.lastGistUrl}</a>
+      </div>
+    );
+  }
+}
+ReactDOM.createRoot(document.getElementById('a5')).render(
+  <UserGist5 source="https://api.github.com/users/octocat/gists" />
+);
+</script>
+</body>
+</html>

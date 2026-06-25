@@ -19,7 +19,8 @@ runoob/
 ├── 11-debug-test/         # 调试测试 - DevTools、VS Code 配置
 ├── 12-security/           # 安全 - 安全配置、CSP、输入验证
 ├── 13-performance/        # 性能优化 - 延迟显示、单实例、内存监控
-├── 14-practical/          # 综合实战 - 多窗口、菜单、文件、通知、Shell
+├── 14-1-notes/            # 项目一：桌面笔记应用（electron-store + Markdown + 多窗口）
+├── 14-2-file-manager/       # 项目二：文件管理器（目录树 + 文件操作 + 拖拽）
 ├── 15-advanced/           # 高级应用 - 自定义协议、窗口状态、广播通信
 ├── 16-release/            # 发布应用（参考目录）
 ├── 17-packaging/          # 打包应用（参考目录）
@@ -53,7 +54,8 @@ npm start
 | 11-debug-test | 调试测试 | ✅ |
 | 12-security | 安全 | ✅ |
 | 13-performance | 性能优化 | ✅ |
-| 14-practical | 综合实战 | ✅ |
+| 14-1-notes | 项目一：桌面笔记 | ✅ |
+| 14-2-file-manager | 项目二：文件管理器 | ✅ |
 | 15-advanced | 高级应用 | ✅ |
 | 18-react-electron | React 集成 | ✅ |
 | 19-vue-electron | Vue 集成 | ✅ |

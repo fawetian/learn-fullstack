@@ -45,6 +45,8 @@ coverage/
 # Electron
 # Compiled app output
 app/
+# Runtime state files
+window-state.json
 
 # Nested independent git repositories / large sub-projects
 claude-agent-desktop/

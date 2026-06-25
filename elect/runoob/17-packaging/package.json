@@ -1,23 +1,34 @@
 {
   "name": "electron-packaging-demo",
   "version": "1.0.0",
+  "description": "Electron 打包配置深度演示 - 多平台/多格式/asar/资源文件",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder",
-    "pack": "electron-builder --dir"
+    "build": "electron-builder",
+    "build:full": "electron-builder --config electron-builder-full.yml",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux",
+    "build:no-asar": "electron-builder --config electron-builder-no-asar.yml",
+    "postinstall": "electron-builder install-app-deps"
   },
   "build": {
-    "appId": "com.example.myapp",
-    "productName": "MyElectronApp",
-    "directories": { "output": "dist" },
-    "files": ["main.js", "preload.js", "index.html"],
-    "mac": { "category": "public.app-category.utilities", "target": "dmg" },
-    "win": { "target": "nsis", "icon": "build/icon.ico" },
-    "linux": { "target": "AppImage", "icon": "build/icon.png" }
+    "appId": "com.example.packaging-demo",
+    "productName": "MyPackagingDemo",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "assets/**/*",
+      "extra-resources/**/*"
+    ]
   },
   "devDependencies": {
     "electron": "latest",
-    "electron-builder": "^24.6.0"
+    "electron-builder": "^25.0.0"
   }
 }

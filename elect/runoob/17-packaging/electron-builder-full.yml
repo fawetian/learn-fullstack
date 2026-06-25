@@ -1,0 +1,118 @@
+# ============================================
+# 17-packaging: 完整打包配置（生产环境）
+# ============================================
+#
+# 这是一个接近生产环境的完整配置，演示：
+# 1. 多平台多格式打包（同一平台打多种安装包）
+# 2. 平台特定图标配置
+# 3. 版权信息和安装程序选项
+# 4. 详细的文件过滤（排除不需要的文件）
+# 5. extraResources 外部资源
+# 6. asar 智能解压配置
+#
+# 使用方式：
+#   npx electron-builder --config electron-builder-full.yml
+# 或
+#   npm run build:full
+
+appId: com.example.packaging-demo
+productName: MyPackagingDemo
+
+copyright: "Copyright © 2024 Example Inc."
+
+directories:
+  output: dist-full
+  buildResources: build
+
+# 文件过滤：精确控制哪些文件进入安装包
+# 这可以显著减小安装包体积
+files:
+  - "main.js"
+  - "preload.js"
+  - "index.html"
+  - "assets/**/*"
+  # 排除开发文件和不需要的模块文件
+  - "!**/*.map"                          # 排除 source map
+  - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}"
+  - "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}"
+  - "!**/node_modules/*.d.ts"            # 排除 TypeScript 声明文件
+  - "!**/node_modules/.bin"             # 排除 npm 脚本
+
+# asar 配置：源码归档
+asar:
+  enabled: true
+  smartUnpack: true  # 大于某尺寸的文件自动解压到外部，避免性能问题
+
+# 外部资源：不打包进 asar，通过 process.resourcesPath 访问
+extraResources:
+  - from: "extra-resources/"
+    to: "extra-resources/"
+    filter:
+      - "**/*"
+
+# ==================== macOS 配置 ====================
+mac:
+  # 图标：必须是 .icns 格式（macOS 专用图标格式）
+  # 可以用 electron-icon-builder 或 sips 命令从 PNG 生成
+  icon: "assets/icons/icon.icns"
+  # 多格式：同时打 .dmg 和 .zip（zip 适合用户手动更新）
+  target:
+    - target: dmg
+      arch: [x64, arm64]  # 同时支持 Intel 和 Apple Silicon
+    - target: zip
+      arch: [x64, arm64]
+  # App Store 分类
+  category: public.app-category.utilities
+  #  hardenedRuntime 是 macOS 公证要求（10.14.5+）
+  hardenedRuntime: true
+  gatekeeperAssess: false
+
+# ==================== Windows 配置 ====================
+win:
+  # 图标：必须是 .ico 格式（多尺寸图标）
+  icon: "assets/icons/icon.ico"
+  # 多格式：安装程序 + 便携版 + 压缩包
+  target:
+    - target: nsis       # 安装程序（最常用）
+      arch: x64
+    - target: portable   # 便携版（无需安装，直接运行）
+      arch: x64
+    - target: zip        # 压缩包
+      arch: x64
+
+# NSIS 安装程序配置（Windows）
+snsis:
+  # 一键安装（不需要用户点击下一步）
+  oneClick: false
+  # 允许用户选择安装目录
+  allowToChangeInstallationDirectory: true
+  # 安装程序图标
+  installerIcon: "assets/icons/icon.ico"
+  # 卸载程序图标
+  uninstallerIcon: "assets/icons/icon.ico"
+  # 安装程序标题
+  menuCategory: "Example"
+  # 创建快捷方式
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
+# ==================== Linux 配置 ====================
+linux:
+  # 图标：PNG 格式
+  icon: "assets/icons/icon.png"
+  # 多格式：AppImage + deb + rpm + snap
+  target:
+    - target: AppImage
+      arch: x64
+    - target: deb
+      arch: x64
+    - target: rpm
+      arch: x64
+  # 应用分类（Linux 桌面菜单用）
+  category: Utility
+  # 维护者信息（deb/rpm 需要）
+  maintainer: "Example Inc."
+  vendor: "Example Inc."
+  # 应用描述
+  synopsis: "Electron Packaging Demo"
+  description: "A demo application to learn Electron packaging."

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>23-refs - React Refs 引用演示</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 20px; }
+  .section { border: 1px solid #ddd; margin: 15px 0; padding: 15px; border-radius: 8px; }
+  h2 { margin-top: 0; color: #333; }
+  pre { background: #f5f5f5; padding: 10px; border-radius: 4px; }
+  button { padding: 8px 16px; cursor: pointer; }
+  input { padding: 6px 10px; margin: 5px; }
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<h1>23-refs - React Refs 引用演示</h1>
+
+<div class="section">
+  <h2>example_1: 创建 Ref 并绑定到 DOM 元素</h2>
+  <p>React.createRef() 创建 ref，通过 ref 属性绑定到 JSX 元素。</p>
+  <div id="r1"></div>
+</div>
+
+<div class="section">
+  <h2>example_2: 使用 Ref 获取焦点</h2>
+  <p>通过 ref.current 访问 DOM 节点，调用原生 DOM API。</p>
+  <div id="r2"></div>
+</div>
+
+<div class="section">
+  <h2>example_3: 回调 Ref（callback ref）</h2>
+  <p>使用回调函数将 DOM 节点赋值给实例属性。</p>
+  <div id="r3"></div>
+</div>
+
+<script type="text/babel">
+// example_1: 创建 Ref 并绑定到 DOM 元素
+// React.createRef() 创建一个 ref 对象，其 current 属性将指向关联的 DOM 节点
+class MyComponent1 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.myRef = React.createRef();
+  }
+  render() {
+    // 当组件挂载后，this.myRef.current 将指向此 div 对应的 DOM 节点
+    return <div ref={this.myRef}>Ref 已绑定到 div 元素</div>;
+  }
+}
+ReactDOM.createRoot(document.getElementById('r1')).render(<MyComponent1 />);
+
+// example_2: 使用 Ref 获取焦点
+// 通过 ref.current 直接操作 DOM，调用原生 focus() 方法
+class MyComponent2 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.myRef = React.createRef();
+  }
+
+  handleClick() {
+    // 使用原生的 DOM API 获取焦点
+    this.myRef.current.focus();
+  }
+
+  render() {
+    // 当组件插入到 DOM 后，ref 属性添加一个组件的引用到 this.myRef
+    return (
+      <div>
+        <input type="text" ref={this.myRef} placeholder="点击按钮获取焦点" />
+        <input
+          type="button"
+          value="点我输入框获取焦点"
+          onClick={this.handleClick.bind(this)}
+        />
+      </div>
+    );
+  }
+}
+ReactDOM.createRoot(document.getElementById('r2')).render(<MyComponent2 />);
+
+// example_3: 回调 Ref（callback ref）
+// 回调 ref 在组件挂载时传入 DOM 节点，卸载时传入 null
+// 适合需要在 ref 变化时执行自定义逻辑的场景
+class MyComponent3 extends React.Component {
+  constructor(props) {
+    super(props);
+    // 初始化实例属性，稍后由回调 ref 赋值
+    this.myRef = null;
+  }
+
+  setTextRef = (node) => {
+    // 组件挂载时 node 为 DOM 元素，卸载时为 null
+    this.myRef = node;
+  }
+
+  handleClick() {
+    if (this.myRef) {
+      this.myRef.focus();
+      this.myRef.value = '通过回调 ref 设置';
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <input type="text" ref={this.setTextRef} placeholder="回调 ref 示例" />
+        <button onClick={this.handleClick.bind(this)}>操作输入框</button>
+      </div>
+    );
+  }
+}
+ReactDOM.createRoot(document.getElementById('r3')).render(<MyComponent3 />);
+</script>
+</body>
+</html>

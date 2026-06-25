@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>25-router - React Router 路由演示</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 20px; }
+  .section { border: 1px solid #ddd; margin: 15px 0; padding: 15px; border-radius: 8px; }
+  h2 { margin-top: 0; color: #333; }
+  nav a { margin-right: 15px; text-decoration: none; color: #0066cc; }
+  nav a.active { font-weight: bold; color: #000; text-decoration: underline; }
+  .page { padding: 15px; background: #fafafa; border-radius: 6px; margin-top: 10px; }
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-router-dom@6/umd/react-router-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<h1>25-router - React Router 路由演示</h1>
+
+<div class="section">
+  <h2>React Router v6 基础路由示例</h2>
+  <p>演示 BrowserRouter、Routes、Route、Link、useParams 等核心 API。</p>
+  <div id="root"></div>
+</div>
+
+<script type="text/babel">
+const { BrowserRouter, Routes, Route, Link, useParams, useNavigate } = ReactRouterDOM;
+
+// 首页组件
+function Home() {
+  return (
+    <div className="page">
+      <h3>🏠 首页</h3>
+      <p>这是首页内容。React Router 让单页应用拥有多页面体验。</p>
+    </div>
+  );
+}
+
+// 关于页面组件
+function About() {
+  return (
+    <div className="page">
+      <h3>ℹ️ 关于</h3>
+      <p>这是关于页面。路由切换时不会刷新整个页面，只更新需要渲染的部分。</p>
+    </div>
+  );
+
+// 用户详情页（演示 URL 参数）
+function User() {
+  // useParams 获取路由参数，如 /user/123 中的 { id: "123" }
+  const { id } = useParams();
+  return (
+    <div className="page">
+      <h3>👤 用户详情</h3>
+      <p>用户 ID: {id}</p>
+      <p>通过 useParams() 从 URL 中提取参数。</p>
+    </div>
+  );
+}
+
+// 导航组件
+function Navigation() {
+  const navigate = useNavigate();
+  return (
+    <nav style={{ marginBottom: '15px', padding: '10px', background: '#eee', borderRadius: '4px' }}>
+      {/* Link 组件会渲染为 <a> 标签，但使用客户端路由，不刷新页面 */}
+      <Link to="/">首页</Link>
+      <Link to="/about">关于</Link>
+      <Link to="/user/100">用户 100</Link>
+      <Link to="/user/200">用户 200</Link>
+      <button onClick={() => navigate('/about')} style={{ marginLeft: '10px' }}>
+        编程式导航到关于页
+      </button>
+    </nav>
+  );
+}
+
+// 404 页面
+function NotFound() {
+  return (
+    <div className="page">
+      <h3>❌ 404</h3>
+      <p>页面未找到。使用 * 通配符路由匹配所有未知路径。</p>
+    </div>
+  );
+}
+
+// 应用根组件
+function App() {
+  return (
+    <BrowserRouter>
+      <Navigation />
+      {/* Routes 替代 v5 的 Switch，只渲染第一个匹配的 Route */}
+      <Routes>
+        {/* path 定义路由路径，element 指定渲染的组件 */}
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        {/* :id 是 URL 参数占位符 */}
+        <Route path="/user/:id" element={<User />} />
+        {/* * 匹配所有路径，通常作为 404 页面 */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

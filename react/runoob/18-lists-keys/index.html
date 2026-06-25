@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>18-lists-keys - React 列表渲染和 Keys 演示</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 20px; }
+  .section { border: 1px solid #ddd; margin: 15px 0; padding: 15px; border-radius: 8px; }
+  h2 { margin-top: 0; color: #333; }
+  pre { background: #f5f5f5; padding: 10px; border-radius: 4px; }
+  ul { padding-left: 20px; }
+  li { margin: 5px 0; }
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<h1>18-lists-keys - React 列表渲染和 Keys 演示</h1>
+
+<div class="section">
+  <h2>example_1: 基础列表渲染（map + key）</h2>
+  <div id="l1"></div>
+</div>
+
+<div class="section">
+  <h2>example_2: 使用对象 id 作为 key</h2>
+  <div id="l2"></div>
+</div>
+
+<div class="section">
+  <h2>example_3: 使用 index 作为 key（不推荐，仅无稳定 id 时用）</h2>
+  <div id="l3"></div>
+</div>
+
+<div class="section">
+  <h2>example_4: 错误示范 - key 写在子组件内部</h2>
+  <div id="l4"></div>
+</div>
+
+<div class="section">
+  <h2>example_5: 传递 key 和 props 给子组件</h2>
+  <div id="l5"></div>
+</div>
+
+<div class="section">
+  <h2>example_6: 正确的 key 位置（在 map 调用处）</h2>
+  <div id="l6"></div>
+</div>
+
+<div class="section">
+  <h2>example_7: 在 JSX 中使用逗号表达式赋值</h2>
+  <div id="l7"></div>
+</div>
+
+<script type="text/babel">
+// example_1: 基础列表渲染（map + key）
+// 使用 map() 将数组转换为 JSX 元素列表
+// key 帮助 React 识别哪些元素变化了、添加了或删除了
+function List1() {
+  const numbers = [1, 2, 3, 4, 5];
+  const listItems = numbers.map((number) => (
+    <li key={number.toString()}>
+      {number}
+    </li>
+  ));
+  return <ul>{listItems}</ul>;
+}
+ReactDOM.createRoot(document.getElementById('l1')).render(<List1 />);
+
+// example_2: 使用对象 id 作为 key（最佳实践）
+// 当列表项有稳定的唯一 id 时，优先使用 id 作为 key
+function List2() {
+  const todos = [
+    { id: 1, text: '学习 React' },
+    { id: 2, text: '学习 JSX' },
+    { id: 3, text: '学习 Hooks' }
+  ];
+  const todoItems = todos.map((todo) => (
+    <li key={todo.id}>
+      {todo.text}
+    </li>
+  ));
+  return <ul>{todoItems}</ul>;
+}
+ReactDOM.createRoot(document.getElementById('l2')).render(<List2 />);
+
+// example_3: 使用 index 作为 key（不推荐，仅无稳定 id 时用）
+// 使用 index 作为 key 在列表项顺序变化时会导致性能问题和状态混乱
+function List3() {
+  const todos = [
+    { text: '学习 React' },
+    { text: '学习 JSX' },
+    { text: '学习 Hooks' }
+  ];
+  const todoItems = todos.map((todo, index) => (
+    // 只有在没有确定的 id 时，才退而求其次使用 index
+    <li key={index}>
+      {todo.text}
+    </li>
+  ));
+  return <ul>{todoItems}</ul>;
+}
+ReactDOM.createRoot(document.getElementById('l3')).render(<List3 />);
+
+// example_4: 错误示范 - key 写在子组件内部
+// 错误：key 应该放在 map 调用时返回的元素上，而不是子组件内部
+// 正确做法：在 map 中使用 <ListItem key={...} />
+function ListItem4({ value }) {
+  // 不要在这里写 key！key 是给 React 内部使用的，不会作为 prop 传给组件
+  return <li>{value}</li>;
+}
+function NumberList4({ numbers }) {
+  const listItems = numbers.map((number) => (
+    // key 必须在这里指定！
+    <ListItem4 key={number.toString()} value={number} />
+  ));
+  return <ul>{listItems}</ul>;
+}
+ReactDOM.createRoot(document.getElementById('l4')).render(
+  <NumberList4 numbers={[1, 2, 3, 4, 5]} />
+);
+
+// example_5: 传递 key 和 props 给子组件
+// key 在 React 内部使用，不会出现在 props 中；需要传递 id 时应单独传递
+function Post({ id, title }) {
+  return <li>Post #{id}: {title}</li>;
+}
+function List5() {
+  const posts = [
+    { id: 1, title: 'Hello React' },
+    { id: 2, title: 'Understanding Hooks' },
+  ];
+  const content = posts.map((post) => (
+    <Post
+      key={post.id}      // key 供 React 内部使用
+      id={post.id}       // id 作为 prop 传给 Post 组件
+      title={post.title} // title 作为 prop 传给 Post 组件
+    />
+  ));
+  return <ul>{content}</ul>;
+}
+ReactDOM.createRoot(document.getElementById('l5')).render(<List5 />);
+
+// example_6: 正确的 key 位置（在 map 调用处）
+function ListItem6({ value }) {
+  return <li>{value}</li>;
+}
+function NumberList6({ numbers }) {
+  const listItems = numbers.map((number) => (
+    <ListItem6 key={number.toString()} value={number} />
+  ));
+  return <ul>{listItems}</ul>;
+}
+ReactDOM.createRoot(document.getElementById('l6')).render(
+  <NumberList6 numbers={[1, 2, 3]} />
+);
+
+// example_7: 在 JSX 中使用逗号表达式赋值
+// 注意：在 JSX 的 {} 中，不能直接用 let/const/var 声明变量
+// 可以用逗号表达式先赋值再返回
+function NumberList7({ numbers }) {
+  return (
+    <ul>
+      {
+        // 逗号表达式：先赋值 numbers = props.numbers，再执行 map 并返回结果
+        (numbers = [10, 20, 30],
+         numbers.map((number) =>
+           <li key={number}>{number}</li>
+         ))
+      }
+    </ul>
+  );
+}
+ReactDOM.createRoot(document.getElementById('l7')).render(<NumberList7 numbers={[1, 2, 3]} />);
+</script>
+</body>
+</html>

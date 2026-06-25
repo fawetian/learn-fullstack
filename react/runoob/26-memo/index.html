@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>26-memo - React.memo 优化演示</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 20px; }
+  .section { border: 1px solid #ddd; margin: 15px 0; padding: 15px; border-radius: 8px; }
+  h2 { margin-top: 0; color: #333; }
+  pre { background: #f5f5f5; padding: 10px; border-radius: 4px; }
+  button { padding: 8px 16px; cursor: pointer; margin: 5px; }
+  .render-count { color: #666; font-size: 0.9em; }
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<h1>26-memo - React.memo 优化演示</h1>
+
+<div class="section">
+  <h2>React.memo 基础用法</h2>
+  <p>React.memo 是高阶组件（HOC），对函数组件进行浅比较 props，如果 props 未变化则跳过渲染。</p>
+  <div id="m1"></div>
+</div>
+
+<div class="section">
+  <h2>自定义比较函数（areEqual）</h2>
+  <p>当 props 是对象或数组时，需要自定义比较函数进行深度比较或特定字段比较。</p>
+  <div id="m2"></div>
+</div>
+
+<script type="text/babel">
+const { useState, useRef, memo } = React;
+
+// example_1: React.memo 基础用法
+// 普通子组件：每次父组件渲染都会重新渲染
+function ChildNormal({ name }) {
+  const renderCount = useRef(0);
+  renderCount.current++;
+  return (
+    <div style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
+      <p>普通子组件：{name}</p>
+      <p className="render-count">渲染次数: {renderCount.current}</p>
+    </div>
+  );
+}
+
+// Memo 子组件：只有 props 变化时才重新渲染
+// React.memo 对 props 进行浅比较，如果未变化则复用上次渲染结果
+const ChildMemo = memo(function ChildMemo({ name }) {
+  const renderCount = useRef(0);
+  renderCount.current++;
+  return (
+    <div style={{ border: '1px solid #4caf50', padding: '10px', margin: '10px 0' }}>
+      <p>Memo 子组件：{name}</p>
+      <p className="render-count">渲染次数: {renderCount.current}</p>
+    </div>
+  );
+});
+
+function App1() {
+  const [count, setCount] = useState(0);
+  const [name, setName] = useState('React');
+  return (
+    <div>
+      <p>父组件 count: {count}</p>
+      <button onClick={() => setCount(c => c + 1)}>增加 count（会导致普通子组件重渲染）</button>
+      <button onClick={() => setName(n => n + '!')}>改变 name</button>
+      <ChildNormal name={name} />
+      <ChildMemo name={name} />
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('m1')).render(<App1 />);
+
+// example_2: 自定义比较函数（areEqual）
+// 当 props 包含对象/数组时，浅比较会失效，需要自定义比较逻辑
+function areEqual(prevProps, nextProps) {
+  // 返回 true 表示 props 相等，不需要重新渲染
+  // 返回 false 表示 props 不相等，需要重新渲染
+  // 这里只比较 user.id，忽略其他字段变化
+  return prevProps.user.id === nextProps.user.id;
+}
+
+function UserCard({ user }) {
+  const renderCount = useRef(0);
+  renderCount.current++;
+  return (
+    <div style={{ border: '1px solid #2196f3', padding: '10px', margin: '10px 0' }}>
+      <p>User: {user.name}, ID: {user.id}</p>
+      <p className="render-count">渲染次数: {renderCount.current}</p>
+    </div>
+  );
+}
+
+// 使用自定义比较函数的 memo 组件
+const MemoUserCard = memo(UserCard, areEqual);
+
+function App2() {
+  const [user, setUser] = useState({ id: 1, name: 'Alice', age: 25 });
+  const [tick, setTick] = useState(0);
+
+  return (
+    <div>
+      <p>tick: {tick}（改变 tick 不会影响 MemoUserCard，因为 areEqual 只比较 id）</p>
+      <button onClick={() => setTick(t => t + 1)}>增加 tick</button>
+      <button onClick={() => setUser({ ...user, name: user.name + '!' })}>修改 name（id 不变，不会重渲染）</button>
+      <button onClick={() => setUser({ id: user.id + 1, name: user.name, age: user.age })}>修改 id（会触发重渲染）</button>
+      <MemoUserCard user={user} />
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('m2')).render(<App2 />);
+</script>
+</body>
+</html>

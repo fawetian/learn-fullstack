@@ -1,0 +1,184 @@
+/* 14-1-notes 笔记应用样式 */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: #333;
+}
+
+/* 顶部工具栏 */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  padding: 10px 15px;
+  background: #f5f7fa;
+  border-bottom: 1px solid #e0e0e0;
+  align-items: center;
+}
+
+.toolbar button {
+  padding: 6px 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.toolbar button:hover { background: #e3f2fd; }
+
+.toolbar .btn-primary {
+  background: #1976d2;
+  color: #fff;
+  border-color: #1976d2;
+}
+
+.toolbar .btn-primary:hover { background: #1565c0; }
+
+.toolbar .btn-danger {
+  background: #d32f2f;
+  color: #fff;
+  border-color: #d32f2f;
+}
+
+.toolbar input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  flex: 1;
+  max-width: 300px;
+}
+
+/* 主内容区分栏 */
+.main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 左侧笔记列表 */
+.sidebar {
+  width: 220px;
+  background: #fafafa;
+  border-right: 1px solid #e0e0e0;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.sidebar h3 {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.note-item {
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.note-item:hover { background: #e3f2fd; }
+
+.note-item.active {
+  background: #1976d2;
+  color: #fff;
+}
+
+.note-item .note-title {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-item .note-time {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+/* 中间编辑区 */
+.editor-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e0e0e0;
+}
+
+.editor-area textarea {
+  flex: 1;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  line-height: 1.6;
+  resize: none;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+}
+
+/* 右侧预览区 */
+.preview-area {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.preview-area h1, .preview-area h2, .preview-area h3 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.preview-area p { margin-bottom: 10px; line-height: 1.6; }
+
+.preview-area code {
+  background: #f5f7fa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.preview-area pre {
+  background: #f5f7fa;
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 10px;
+}
+
+.preview-area ul, .preview-area ol {
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+
+.preview-area blockquote {
+  border-left: 4px solid #ccc;
+  padding-left: 12px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+/* 状态栏 */
+.status-bar {
+  padding: 6px 15px;
+  background: #f5f7fa;
+  border-top: 1px solid #e0e0e0;
+  font-size: 12px;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+}
+
+.status-bar .saved { color: #388e3c; }
+.status-bar .unsaved { color: #d32f2f; }

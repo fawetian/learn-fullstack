@@ -1,0 +1,1 @@
+<input type="text" style={{"backgroundColor":"yellow","color":"red"}} value={value}/>

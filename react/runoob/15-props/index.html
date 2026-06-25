@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>15-props - React Props 传递演示</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 20px; }
+  .section { border: 1px solid #ddd; margin: 15px 0; padding: 15px; border-radius: 8px; }
+  h2 { margin-top: 0; color: #333; }
+  pre { background: #f5f5f5; padding: 10px; border-radius: 4px; }
+  button { padding: 8px 16px; cursor: pointer; }
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<h1>15-props - React Props 传递演示</h1>
+
+<div class="section">
+  <h2>example_2: PropTypes CDN 引入</h2>
+  <pre><code>&lt;script src="https://cdn.../prop-types.min.js"&gt;&lt;/script&gt;</code></pre>
+  <p>PropTypes 用于运行时类型检查，帮助捕获传入错误类型的 props。</p>
+</div>
+
+<div class="section">
+  <h2>example_3: 父传子时重命名 props</h2>
+  <div id="p3"></div>
+</div>
+
+<div class="section">
+  <h2>example_4: 展开多个 props</h2>
+  <div id="p4"></div>
+</div>
+
+<div class="section">
+  <h2>example_5: 完整父子组件通信（state + props + callback）</h2>
+  <div id="p5"></div>
+</div>
+
+<div class="section">
+  <h2>example_6: 父子双向数据绑定演示</h2>
+  <div id="p6"></div>
+</div>
+
+<script type="text/babel">
+// example_3: 父传子时重命名 props
+// 父组件传入 name 属性，子组件通过 title 接收
+function Name(props) {
+  return <p>Name 组件通过 title 接收: {props.title}</p>;
+}
+function Url(props) {
+  return <p>Url 组件通过 site 接收: {props.site}</p>;
+}
+function Parent3() {
+  const name = "React";
+  const url = "https://react.dev";
+  return (
+    <div>
+      <Name title={name} />
+      <Url site={url} />
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('p3')).render(<Parent3 />);
+
+// example_4: 展开多个 props（手动传递多个属性）
+function Child4({ name, url }) {
+  return <p>收到 name={name}, url={url}</p>;
+}
+function Parent4() {
+  return <Child4 name="React" url="https://react.dev" />;
+}
+ReactDOM.createRoot(document.getElementById('p4')).render(<Parent4 />);
+
+// example_5: 完整父子组件通信
+// 父组件管理 state，通过 props 将数据和回调传递给子组件
+class BodyChild extends React.Component {
+  render() {
+    return (
+      <div style={{ border: '1px solid #ccc', padding: '10px', marginTop: '10px' }}>
+        <p>子页面输出：<input type='text' onChange={this.props.changeUsername} /></p>
+      </div>
+    );
+  }
+}
+
+class CptBody extends React.Component {
+  constructor() {
+    super();
+    // state 初始化：username 为字符串
+    this.state = { username: "父级名称" };
+    // 方法绑定：确保事件回调中的 this 指向组件实例
+    this.changeAge = this.changeAge.bind(this);
+    this.changeUsername = this.changeUsername.bind(this);
+  }
+
+  changeAge() {
+    // setState 更新 state，触发重新渲染
+    this.setState({ username: "父级名称--修改" });
+  }
+
+  changeUsername(event) {
+    // 通过 event.target.value 获取输入框的值
+    this.setState({ username: event.target.value });
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>这里是主体内容部分</h1>
+        <p>当前 username: {this.state.username}</p>
+        <input type="button" value="点击改变 username" onClick={this.changeAge} />
+        {/* 将回调函数通过 props 传递给子组件，子组件调用即可修改父组件 state */}
+        <BodyChild changeUsername={this.changeUsername} />
+      </div>
+    );
+  }
+}
+ReactDOM.createRoot(document.getElementById('p5')).render(<CptBody />);
+
+// example_6: 父子双向数据绑定演示
+// 父组件的 state 同时作为子组件 input 的 value，形成双向绑定
+class BodyChild6 extends React.Component {
+  render() {
+    return (
+      <div style={{ border: '1px solid #ccc', padding: '10px', marginTop: '10px' }}>
+        <p>子页面输入：<input type='text' value={this.props.getname} onChange={this.props.changeUsername} /></p>
+      </div>
+    );
+  }
+}
+
+class CptBody6 extends React.Component {
+  constructor() {
+    super();
+    this.state = { username: 1 };
+    this.changeAge = this.changeAge.bind(this);
+    this.changeUsername = this.changeUsername.bind(this);
+  }
+
+  changeAge() {
+    this.setState({ username: 1 + this.state.username });
+  }
+
+  changeUsername(event) {
+    this.setState({ username: parseInt(event.target.value) || 0 });
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>下面的操作有惊喜</h1>
+        <p>{this.state.username}</p>
+        <input type="button" value="点击改变 username" onClick={() => this.changeAge()} />
+        {/* getname 将 state 传给子组件显示，changeUsername 让子组件能修改父组件 state */}
+        <BodyChild6 changeUsername={this.changeUsername} getname={this.state.username} />
+      </div>
+    );
+  }
+}
+ReactDOM.createRoot(document.getElementById('p6')).render(<CptBody6 />);
+</script>
+</body>
+</html>

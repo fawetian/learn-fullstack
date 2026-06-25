@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>Electron 打包发布演示</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .info-card { background: #f5f7fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    .info-card h3 { margin-top: 0; }
+    .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e0e0e0; }
+    .row:last-child { border-bottom: none; }
+    .label { font-weight: bold; color: #555; }
+    .value { font-family: monospace; color: #1976d2; }
+    button { padding: 12px 24px; font-size: 16px; cursor: pointer; margin-right: 10px; border: none; border-radius: 4px; }
+    .btn-primary { background: #1976d2; color: white; }
+    .btn-secondary { background: #e0e0e0; color: #333; }
+    #status { margin-top: 15px; padding: 12px; border-radius: 4px; background: #fff3e0; min-height: 20px; }
+    .code { background: #263238; color: #aed581; padding: 15px; border-radius: 4px; font-family: monospace; overflow-x: auto; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Electron 打包与发布演示</h1>
+  <p>这是一个可以实际打包出安装包的应用。点击"打包应用"按钮查看命令。</p>
+
+  <div class="info-card">
+    <h3>应用信息</h3>
+    <div class="row"><span class="label">版本号</span><span class="value" id="version">加载中...</span></div>
+    <div class="row"><span class="label">是否打包版</span><span class="value" id="isPackaged">加载中...</span></div>
+    <div class="row"><span class="label">当前平台</span><span class="value" id="platform">加载中...</span></div>
+    <div class="row"><span class="label">资源路径</span><span class="value" id="resourcesPath">加载中...</span></div>
+  </div>
+
+  <div>
+    <button class="btn-primary" id="checkUpdate">检查更新</button>
+    <button class="btn-secondary" id="showBuildCmd">显示打包命令</button>
+  </div>
+
+  <div id="status"></div>
+
+  <div id="cmdPanel" style="display:none; margin-top: 20px;">
+    <h3>打包命令（在终端中执行）</h3>
+    <div class="code">
+# 1. 确保在项目根目录下
+cd 16-release
+
+# 2. 安装依赖（已安装可跳过）
+npm install
+
+# 3. 打包当前平台
+npm run build
+
+# 4. 打包输出在 dist/ 目录
+# Windows: dist/Electron 发布演示 Setup 1.0.0.exe
+# macOS: dist/Electron 发布演示-1.0.0.dmg
+# Linux: dist/Electron 发布演示-1.0.0.AppImage
+    </div>
+  </div>
+
+  <script>
+    async function loadInfo() {
+      const info = await window.releaseAPI.getVersion();
+      document.getElementById('version').textContent = info.version;
+      document.getElementById('isPackaged').textContent = info.isPackaged ? '是（生产环境）' : '否（开发环境）';
+      document.getElementById('platform').textContent = info.platform;
+      document.getElementById('resourcesPath').textContent = info.resourcesPath;
+    }
+    loadInfo();
+
+    document.getElementById('checkUpdate').addEventListener('click', async () => {
+      const status = document.getElementById('status');
+      status.textContent = '正在检查更新...';
+      const res = await window.releaseAPI.checkUpdate();
+      status.textContent = '状态: ' + res.status + ' | ' + (res.message || JSON.stringify(res.result));
+    });
+
+    document.getElementById('showBuildCmd').addEventListener('click', () => {
+      const panel = document.getElementById('cmdPanel');
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
+  </script>
+</body>
+</html>

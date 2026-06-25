@@ -1,0 +1,17 @@
+/* Card.module.css */
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 20px;
+  margin: 20px;
+}
+
+.title {
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.content {
+  color: #666;
+}

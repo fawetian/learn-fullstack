@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>17-conditional-rendering - React 条件渲染演示</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 20px; }
+  .section { border: 1px solid #ddd; margin: 15px 0; padding: 15px; border-radius: 8px; }
+  h2 { margin-top: 0; color: #333; }
+  pre { background: #f5f5f5; padding: 10px; border-radius: 4px; }
+  button { padding: 8px 16px; cursor: pointer; margin: 5px; }
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<h1>17-conditional-rendering - React 条件渲染演示</h1>
+
+<div class="section">
+  <h2>example_1: 条件渲染基础组件</h2>
+  <div id="c1"></div>
+</div>
+
+<div class="section">
+  <h2>example_2: 内联条件表达式（三元运算符）</h2>
+  <div id="c2"></div>
+</div>
+
+<div class="section">
+  <h2>example_3: 条件渲染整个组件</h2>
+  <div id="c3"></div>
+</div>
+
+<div class="section">
+  <h2>example_4: 函数式 setState（基于 prevState）</h2>
+  <div id="c4"></div>
+</div>
+
+<div class="section">
+  <h2>example_5: 函数式 setState 通用模板</h2>
+  <pre><code>this.setState((prevState, props) => ({ ... }));</code></pre>
+  <p>基于 prevState 更新是安全做法，避免异步更新带来的状态覆盖问题。</p>
+</div>
+
+<div class="section">
+  <h2>example_6: 完整条件切换组件（Hello / Gobye）</h2>
+  <div id="c6"></div>
+</div>
+
+<script type="text/babel">
+// example_1: 条件渲染基础组件
+// 根据条件渲染不同的组件，是 React 中常见的 UI 分支模式
+function UserGreeting(props) {
+  return <h1>欢迎回来!</h1>;
+}
+function GuestGreeting(props) {
+  return <h1>请先注册。</h1>;
+}
+function Greeting({ isLoggedIn }) {
+  // 根据 props 条件返回不同的组件
+  if (isLoggedIn) {
+    return <UserGreeting />;
+  }
+  return <GuestGreeting />;
+}
+function App1() {
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  return (
+    <div>
+      <Greeting isLoggedIn={loggedIn} />
+      <button onClick={() => setLoggedIn(!loggedIn)}>
+        {loggedIn ? '退出' : '登录'}
+      </button>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('c1')).render(<App1 />);
+
+// example_2: 内联条件表达式（三元运算符）
+// 在 JSX 中直接使用三元运算符进行条件渲染，不需要 if 语句
+function App2() {
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  return (
+    <div>
+      <p>
+        The user is <b>{isLoggedIn ? 'currently' : 'not'}</b> logged in.
+      </p>
+      <button onClick={() => setIsLoggedIn(!isLoggedIn)}>切换状态</button>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('c2')).render(<App2 />);
+
+// example_3: 条件渲染整个组件（元素变量）
+// 将 JSX 元素赋值给变量，在 render 中根据条件使用不同变量
+function LoginButton({ onClick }) {
+  return <button onClick={onClick}>登录</button>;
+}
+function LogoutButton({ onClick }) {
+  return <button onClick={onClick}>退出</button>;
+}
+function App3() {
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  return (
+    <div>
+      {isLoggedIn ? (
+        <LogoutButton onClick={() => setIsLoggedIn(false)} />
+      ) : (
+        <LoginButton onClick={() => setIsLoggedIn(true)} />
+      )}
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('c3')).render(<App3 />);
+
+// example_4: 函数式 setState（基于 prevState）
+// 使用函数式更新确保状态基于最新值，避免异步批处理导致的问题
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { showWarning: true };
+    this.handleToggleClick = this.handleToggleClick.bind(this);
+  }
+
+  handleToggleClick() {
+    // prevState 是 React 保证的最新状态快照
+    this.setState(prevState => ({
+      showWarning: !prevState.showWarning
+    }));
+  }
+
+  render() {
+    return (
+      <div>
+        <button onClick={this.handleToggleClick}>
+          {this.state.showWarning ? '隐藏' : '显示'} 警告
+        </button>
+        {this.state.showWarning && (
+          <p style={{ color: 'red' }}>⚠️ 这是一个警告信息！</p>
+        )}
+      </div>
+    );
+  }
+}
+ReactDOM.createRoot(document.getElementById('c4')).render(<Toggle />);
+
+// example_6: 完整条件切换组件（Hello / Gobye）
+// 演示 if/else 条件渲染 + 按钮切换
+function Hello() {
+  return <h1>Hello, Welcome to ziyang Blog</h1>;
+}
+function Gobye() {
+  return <h1>Oh, Go Bye!</h1>;
+}
+class Demo extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { who: true };
+    this.login = this.login.bind(this);
+  }
+
+  login() {
+    // 函数式更新：基于前一个状态切换
+    this.setState(prevState => ({
+      who: !prevState.who
+    }));
+  }
+
+  render() {
+    // 将按钮元素提取为变量，减少重复代码
+    let element = <button onClick={this.login}>{this.state.who ? '退出登录' : '登录'}</button>;
+    if (this.state.who) {
+      return (
+        <div>
+          {element}
+          <Hello />
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          {element}
+          <Gobye />
+        </div>
+      );
+    }
+  }
+}
+ReactDOM.createRoot(document.getElementById('c6')).render(<Demo />);
+</script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>桌面笔记</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- 引入 marked 库解析 Markdown（从 node_modules 加载） -->
+  <script src="./node_modules/marked/marked.min.js"></script>
+</head>
+<body>
+  <!-- 顶部工具栏 -->
+  <div class="toolbar">
+    <button class="btn-primary" id="btnNew">+ 新建笔记</button>
+    <button id="btnSave">保存</button>
+    <button id="btnNewWin">新建窗口</button>
+    <input type="text" id="searchInput" placeholder="搜索笔记...">
+    <button class="btn-danger" id="btnDelete">删除</button>
+  </div>
+
+  <!-- 主内容区：三栏布局 -->
+  <div class="main">
+    <!-- 左侧：笔记列表 -->
+    <div class="sidebar" id="sidebar">
+      <h3>笔记列表</h3>
+      <div id="noteList"></div>
+    </div>
+
+    <!-- 中间：Markdown 编辑器 -->
+    <div class="editor-area">
+      <textarea id="editor" placeholder="在此输入 Markdown...
+
+支持标题、列表、代码块等"></textarea>
+    </div>
+
+    <!-- 右侧：实时预览 -->
+    <div class="preview-area" id="preview">
+      <p style="color:#999">预览区域</p>
+    </div>
+  </div>
+
+  <!-- 底部状态栏 -->
+  <div class="status-bar">
+    <span id="statusCount">0 篇笔记</span>
+    <span id="statusSave">已保存</span>
+  </div>
+
+  <script>
+    /**
+     * 14-1-notes 渲染进程逻辑
+     *
+     * 数据模型：
+     * - notes: Array<{id, title, content, updatedAt}>
+     * - currentId: 当前正在编辑的笔记 ID
+     *
+     * 流程：
+     * 1. 启动时 window.notesAPI.getNotes() 读取 persisted 数据
+     * 2. 用户输入时实时渲染 Markdown 预览
+     * 3. 300ms debounce 后自动保存到 electron-store
+     * 4. 菜单"保存"（Ctrl+S）也会触发保存
+     */
+
+    let notes = [];        // 所有笔记
+    let currentId = null;  // 当前编辑的笔记 ID
+    let saveTimer = null;  // debounce 定时器
+    let isDirty = false;   // 是否有未保存修改
+
+    const editor = document.getElementById('editor');
+    const preview = document.getElementById('preview');
+    const noteList = document.getElementById('noteList');
+    const statusCount = document.getElementById('statusCount');
+    const statusSave = document.getElementById('statusSave');
+    const searchInput = document.getElementById('searchInput');
+
+    // ===== 初始化：加载笔记 =====
+
+    async function init() {
+      notes = await window.notesAPI.getNotes();
+      if (!Array.isArray(notes)) notes = [];
+      renderList();
+      if (notes.length > 0) selectNote(notes[0].id);
+      updateStatus();
+    }
+
+    init();
+
+    // ===== 笔记列表渲染 =====
+
+    function renderList() {
+      const keyword = searchInput.value.trim().toLowerCase();
+      const filtered = keyword
+        ? notes.filter(n => (n.title || '').toLowerCase().includes(keyword) || (n.content || '').toLowerCase().includes(keyword))
+        : notes;
+
+      noteList.innerHTML = filtered.map(n => `
+        <div class="note-item ${n.id === currentId ? 'active' : ''}" data-id="${n.id}">
+          <div class="note-title">${escapeHtml(n.title || '无标题')}</div>
+          <div class="note-time">${formatTime(n.updatedAt)}</div>
+        </div>
+      `).join('');
+
+      // 绑定点击事件
+      noteList.querySelectorAll('.note-item').forEach(el => {
+        el.addEventListener('click', () => selectNote(el.dataset.id));
+      });
+
+      statusCount.textContent = `${notes.length} 篇笔记`;
+    }
+
+    // ===== 选择笔记 =====
+
+    function selectNote(id) {
+      if (isDirty) saveNotes();  // 切换前保存当前
+      currentId = id;
+      const note = notes.find(n => n.id === id);
+      editor.value = note ? note.content : '';
+      renderMarkdown();
+      renderList();
+      isDirty = false;
+      updateStatus();
+    }
+
+    // ===== Markdown 实时预览 =====
+
+    function renderMarkdown() {
+      const text = editor.value;
+      // 使用 marked 库解析 Markdown 为 HTML
+      preview.innerHTML = window.marked ? window.marked.parse(text || '') : '<p> marked 库加载中...</p>';
+    }
+
+    // ===== 编辑器输入事件 =====
+
+    editor.addEventListener('input', () => {
+      renderMarkdown();
+      isDirty = true;
+      updateStatus();
+
+      // 自动保存：输入停止 300ms 后触发
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        saveNotes();
+      }, 300);
+    });
+
+    // ===== 保存笔记 =====
+
+    async function saveNotes() {
+      if (!isDirty) return;
+      const content = editor.value.trim();
+      const title = content.split('\n')[0].replace(/^#+\s*/, '').slice(0, 30) || '无标题';
+
+      if (currentId) {
+        // 更新现有笔记
+        const idx = notes.findIndex(n => n.id === currentId);
+        if (idx >= 0) {
+          notes[idx] = { ...notes[idx], title, content, updatedAt: Date.now() };
+        }
+      } else {
+        // 新建笔记
+        currentId = 'note_' + Date.now();
+        notes.unshift({ id: currentId, title, content, updatedAt: Date.now() });
+      }
+
+      await window.notesAPI.saveNotes(notes);
+      isDirty = false;
+      updateStatus();
+      renderList();
+      console.log('笔记已保存');
+    }
+
+    // ===== 按钮事件 =====
+
+    document.getElementById('btnNew').addEventListener('click', () => {
+      if (isDirty) saveNotes();
+      currentId = null;
+      editor.value = '# 新笔记\n\n在此输入内容...';
+      renderMarkdown();
+      isDirty = true;
+      updateStatus();
+      editor.focus();
+    });
+
+    document.getElementById('btnSave').addEventListener('click', () => {
+      saveNotes();
+    });
+
+    document.getElementById('btnNewWin').addEventListener('click', async () => {
+      await window.notesAPI.createWindow();
+    });
+
+    document.getElementById('btnDelete').addEventListener('click', async () => {
+      if (!currentId) return;
+      if (!confirm('确定删除这篇笔记？')) return;
+      await window.notesAPI.deleteNote(currentId);
+      notes = notes.filter(n => n.id !== currentId);
+      currentId = null;
+      editor.value = '';
+      preview.innerHTML = '<p style="color:#999">预览区域</p>';
+      renderList();
+      isDirty = false;
+      updateStatus();
+    });
+
+    searchInput.addEventListener('input', renderList);
+
+    // 监听菜单保存快捷键（主进程发送）
+    window.notesAPI.onMenuSave(() => saveNotes());
+
+    // ===== 辅助函数 =====
+
+    function updateStatus() {
+      statusSave.textContent = isDirty ? '未保存' : '已保存';
+      statusSave.className = isDirty ? 'unsaved' : 'saved';
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatTime(ts) {
+      if (!ts) return '';
+      const d = new Date(ts);
+      return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+    }
+  </script>
+</body>
+</html>
