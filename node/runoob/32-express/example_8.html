@@ -1,0 +1,24 @@
+<!--
+  ============================================================
+  章节: Node.js Express 框架
+  文件: node/runoob/32-express/example_8.html
+  ============================================================
+  说明: 这是浏览器渲染的 HTML 模板文件
+        类似 Go 的 html/template 输出，被 ReactDOM 挂载到 DOM 节点上
+  ============================================================
+ -->
+
+<html>
+<head>
+<title>文件上传表单</title>
+</head>
+<body>
+<h3>文件上传：</h3>
+选择一个文件上传: <br />
+<form action="/file_upload" method="post" enctype="multipart/form-data">
+<input type="file" name="image" size="50" />
+<br />
+<input type="submit" value="上传文件" />
+</form>
+</body>
+</html>

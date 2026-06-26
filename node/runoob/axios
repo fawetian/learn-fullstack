@@ -1,0 +1,6 @@
+// 模拟 axios
+const axios = {
+    get: (url) => Promise.resolve({ data: 'mock data', status: 200 }),
+    post: (url, data) => Promise.resolve({ data: { success: true }, status: 200 }),
+};
+module.exports = axios;

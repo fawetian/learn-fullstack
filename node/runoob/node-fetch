@@ -1,0 +1,7 @@
+// 模拟 fetch
+const fetch = (url) => Promise.resolve({
+    json: () => Promise.resolve({ data: 'mock' }),
+    text: () => Promise.resolve('mock text'),
+    status: 200,
+});
+module.exports = fetch;
