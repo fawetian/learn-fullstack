@@ -1,0 +1,116 @@
+/*
+ * ============================================================
+ * 章节: React 博客项目：路由
+ * 文件: react/runoob/37-blog-router/example_10.css
+ * ============================================================
+ * 说明: 样式文件，类似 Go 项目中 static/css/ 下的资源文件
+ * ============================================================
+ */
+
+.post-view {
+
+  max-width: 720px;
+
+  margin: 0 auto;
+
+}
+
+
+
+.category-tag {
+
+  display: inline-block;
+
+  padding: 4px 12px;
+
+  background: #e3f2fd;
+
+  color: #1976d2;
+
+  border-radius: 12px;
+
+  font-size: 13px;
+
+  margin-bottom: 12px;
+
+}
+
+
+
+.post-view h1 {
+
+  font-size: 32px;
+
+  margin-bottom: 12px;
+
+  line-height: 1.4;
+
+}
+
+
+
+.post-view time {
+
+  display: block;
+
+  color: #999;
+
+  font-size: 14px;
+
+  margin-bottom: 30px;
+
+}
+
+
+
+.content {
+
+  line-height: 1.8;
+
+  font-size: 16px;
+
+  color: #333;
+
+}
+
+
+
+.content h2 {
+
+  margin: 24px 0 12px;
+
+  font-size: 22px;
+
+}
+
+
+
+.content p {
+
+  margin-bottom: 12px;
+
+}
+
+
+
+.back-link {
+
+  display: inline-block;
+
+  margin-top: 40px;
+
+  color: #1976d2;
+
+  text-decoration: none;
+
+}
+
+
+
+.not-found {
+
+  text-align: center;
+
+  padding: 60px 0;
+
+}

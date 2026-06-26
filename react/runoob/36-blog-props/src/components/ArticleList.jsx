@@ -1,9 +1,15 @@
 /**
- * 36-blog-props: 文章列表组件
- * 来源章节: https://www.runoob.com/react/react-blog-props-component.html
- *
- * 这是 React 的状态管理父组件，作用是管理文章状态并通过 Props 将数据传递给 ArticleCard。
- * 需要注意：ArticleList 是"有状态组件"，ArticleCard 是"展示组件"（无状态），这是 React 常见的组件分工模式。
+ * ============================================================
+ * 章节: React 博客项目：Props
+ * 文件: react/runoob/36-blog-props/src/components/ArticleList.jsx
+ * ============================================================
+ * 核心概念速查（Go 后端开发者视角）:
+ * - 组件 ≈ Go 的函数/方法，接收 props（类似参数）返回 UI（类似字符串渲染）
+ * - JSX ≈ Go 的 html/template，在代码中写 HTML 语法，编译为 JS 对象
+ * - State ≈ 闭包捕获的变量，变化触发组件重新执行（类似函数重入）
+ * - 虚拟 DOM ≈  diff 算法，只更新变化的节点（类似 git diff 后 patch）
+ * - Hooks ≈ 闭包 + 函数组合，useState 像返回 (value, setter) 的函数
+ * ============================================================
  */
 
 import React, { useState } from 'react'

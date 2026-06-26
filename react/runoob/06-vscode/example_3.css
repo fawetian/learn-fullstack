@@ -1,0 +1,84 @@
+/*
+ * ============================================================
+ * 章节: React VS Code 配置
+ * 文件: react/runoob/06-vscode/example_3.css
+ * ============================================================
+ * 说明: 样式文件，类似 Go 项目中 static/css/ 下的资源文件
+ * ============================================================
+ */
+
+import React from 'react';
+
+
+
+const Card = ({ title, content, imageUrl }) => {
+
+  return (
+
+    <div
+
+      style={{
+
+        width: '300px',
+
+        border: '1px solid #ccc',
+
+        borderRadius: '12px',
+
+        overflow: 'hidden',
+
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+
+        margin: '20px auto',
+
+        backgroundColor: '#fff',
+
+        fontFamily: 'Arial, sans-serif',
+
+      }}
+
+    >
+
+      {imageUrl && (
+
+        <img
+
+          src={imageUrl}
+
+          alt={title}
+
+          style={{
+
+            width: '100%',
+
+            height: '200px',
+
+            objectFit: 'cover',
+
+          }}
+
+        />
+
+      )}
+
+      <div style={{ padding: '20px' }}>
+
+        <h3 style={{ margin: '0 0 10px 0', color: '#333' }}>{title}</h3>
+
+        <p style={{ margin: 0, color: '#666', lineHeight: '1.5' }}>
+
+          {content}
+
+        </p>
+
+      </div>
+
+    </div>
+
+  );
+
+};
+
+
+
+export default Card;

@@ -1,1 +1,0 @@
-fetchMetadata: sill mapToRegistry uri http://registry.npmjs.org/whatwg-fetch

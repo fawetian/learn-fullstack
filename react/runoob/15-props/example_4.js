@@ -1,1 +1,0 @@
-<Name name={this.props.name} url={this.props.url}  .../>

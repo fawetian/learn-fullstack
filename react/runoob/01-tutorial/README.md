@@ -14,8 +14,17 @@
 
 | 文件 | 说明 |
 |------|------|
-| `example_1.js` | 教程代码示例，展示 React 基础语法 |
+| `example_1.html` | 可直接运行的 React 入门示例：CDN 引入 React/Babel + 一个带状态的计数器组件 |
 
 ## 运行/学习方法
 
-本章是入门引导章节，主要介绍 React 教程的概览和学习路径。无需运行代码，建议阅读在线教程了解 React 的整体知识结构，然后继续后续章节进行实践。
+直接用浏览器打开 `example_1.html` 即可（双击文件，或在浏览器中打开），无需安装任何依赖或构建工具。
+
+示例通过 CDN 引入三件套：
+
+- **react / react-dom**：React 核心库与 DOM 渲染库
+- **babel-standalone**：在浏览器里实时把 JSX 编译成普通 JS（所以写 JSX 的 `<script>` 要标 `type="text/babel"`）
+
+页面会渲染一个标题和计数按钮，点击按钮演示 React 的状态（`useState`）与声明式更新。
+
+> 说明：CDN 方式仅适合入门快速体验，正式项目应使用 Vite / Create React App 等构建工具。

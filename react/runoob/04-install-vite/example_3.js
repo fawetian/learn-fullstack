@@ -1,1 +1,0 @@
-yarn create vite my-first-react-app --template react

@@ -1,1 +1,0 @@
-<script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/prop-types/15.8.1/prop-types.min.js" type="application/javascript"></script>

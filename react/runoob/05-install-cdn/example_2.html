@@ -1,0 +1,30 @@
+<!--
+  ============================================================
+  章节: React 安装（CDN）
+  文件: react/runoob/05-install-cdn/example_2.html
+  ============================================================
+  说明: 这是浏览器渲染的 HTML 模板文件
+        类似 Go 的 html/template 输出，被 ReactDOM 挂载到 DOM 节点上
+  ============================================================
+ -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>React CDN Example (Staticfile)</title>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://cdn.staticfile.org/react/18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.staticfile.org/react-dom/18.2.0/umd/react-dom.development.js"></script>
+  <!-- 生产环境中不建议使用 development 版本 -->
+
+  <script type="text/babel">
+    const element = React.createElement('h1', null, 'Hello, React from Staticfile!');
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(element);
+  </script>
+</body>
+</html>

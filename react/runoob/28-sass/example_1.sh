@@ -1,0 +1,9 @@
+$myColor: red;
+
+
+
+h1 {
+
+  color: $myColor;
+
+}

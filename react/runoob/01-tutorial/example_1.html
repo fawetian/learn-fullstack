@@ -1,0 +1,33 @@
+<!--
+  ============================================================
+  章节: React 教程
+  文件: react/runoob/01-tutorial/example_1.html
+  ============================================================
+  说明: 这是浏览器渲染的 HTML 模板文件
+        类似 Go 的 html/template 输出，被 ReactDOM 挂载到 DOM 节点上
+  ============================================================
+ -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>React Tutorial Example</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="example"></div>
+  <script type="text/babel">
+  // 简单的 React 组件
+  function App() {
+      return <h1>Hello, React!</h1>;
+  }
+   
+  const root = ReactDOM.createRoot(document.getElementById("example"));
+  // 渲染 React 组件到 DOM
+  root.render(<App />);
+  </script>
+</body>
+</html>

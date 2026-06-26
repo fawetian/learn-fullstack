@@ -1,0 +1,72 @@
+/*
+ * ============================================================
+ * 章节: React 博客项目：useState
+ * 文件: react/runoob/35-blog-usestate/example_6.css
+ * ============================================================
+ * 说明: 样式文件，类似 Go 项目中 static/css/ 下的资源文件
+ * ============================================================
+ */
+
+.category-bar {
+
+  display: flex;
+
+  gap: 10px;
+
+  margin-bottom: 16px;
+
+  flex-wrap: wrap;
+
+}
+
+
+
+.category-bar button {
+
+  padding: 6px 16px;
+
+  border: 1px solid #ddd;
+
+  border-radius: 20px;
+
+  background: #fff;
+
+  cursor: pointer;
+
+  font-size: 14px;
+
+  transition: all 0.2s;
+
+}
+
+
+
+.category-bar button.active {
+
+  background: #1976d2;
+
+  color: #fff;
+
+  border-color: #1976d2;
+
+}
+
+
+
+.category-bar button:hover {
+
+  border-color: #1976d2;
+
+}
+
+
+
+.result-info {
+
+  color: #999;
+
+  font-size: 14px;
+
+  margin-bottom: 16px;
+
+}

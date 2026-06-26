@@ -1,0 +1,62 @@
+/*
+ * ============================================================
+ * 章节: React 博客项目：自定义 Hooks
+ * 文件: react/runoob/40-blog-custom-hooks/example_6.css
+ * ============================================================
+ * 说明: 样式文件，类似 Go 项目中 static/css/ 下的资源文件
+ * ============================================================
+ */
+
+/* 浅色模式（默认） */
+
+:root {
+
+  --bg-primary: #f5f5f5;
+
+  --bg-card: #ffffff;
+
+  --text-primary: #333333;
+
+  --text-secondary: #666666;
+
+  --border-color: #eeeeee;
+
+}
+
+
+
+/* 暗黑模式 */
+
+html.dark {
+
+  --bg-primary: #1a1a2e;
+
+  --bg-card: #16213e;
+
+  --text-primary: #e0e0e0;
+
+  --text-secondary: #a0a0a0;
+
+  --border-color: #2a2a4a;
+
+}
+
+
+
+body {
+
+  background: var(--bg-primary);
+
+  color: var(--text-primary);
+
+}
+
+
+
+.card, .article-card {
+
+  background: var(--bg-card);
+
+  border: 1px solid var(--border-color);
+
+}

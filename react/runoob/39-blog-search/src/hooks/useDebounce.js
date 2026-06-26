@@ -1,9 +1,15 @@
 /**
- * 39-blog-search: 简单防抖 Hook（基础版）
- * 来源章节: https://www.runoob.com/react/react-blog-search.html
- *
- * 这是 React 的 useEffect 防抖实现，作用是延迟更新值，避免频繁触发副作用。
- * 需要注意：防抖通过 setTimeout 实现，每次依赖变化时清除旧定时器，只执行最后一次。
+ * ============================================================
+ * 章节: React 博客项目：搜索
+ * 文件: react/runoob/39-blog-search/src/hooks/useDebounce.js
+ * ============================================================
+ * 核心概念速查（Go 后端开发者视角）:
+ * - 组件 ≈ Go 的函数/方法，接收 props（类似参数）返回 UI（类似字符串渲染）
+ * - JSX ≈ Go 的 html/template，在代码中写 HTML 语法，编译为 JS 对象
+ * - State ≈ 闭包捕获的变量，变化触发组件重新执行（类似函数重入）
+ * - 虚拟 DOM ≈  diff 算法，只更新变化的节点（类似 git diff 后 patch）
+ * - Hooks ≈ 闭包 + 函数组合，useState 像返回 (value, setter) 的函数
+ * ============================================================
  */
 
 import { useState, useEffect } from 'react'

@@ -1,0 +1,56 @@
+/*
+ * ============================================================
+ * 章节: React CSS
+ * 文件: react/runoob/27-css/example_2.css
+ * ============================================================
+ * 说明: 样式文件，类似 Go 项目中 static/css/ 下的资源文件
+ * ============================================================
+ */
+
+import React from 'react';
+
+import ReactDOM from 'react-dom';
+
+
+
+const MyComponent = () => {
+
+  // 定义内联样式对象
+
+  const containerStyle = {
+
+    padding: '20px',
+
+    backgroundColor: '#f0f0f0'
+
+  };
+
+
+
+  const titleStyle = {
+
+    fontSize: '24px',
+
+    color: '#333'
+
+  };
+
+
+
+  return (
+
+    <div style={containerStyle}>
+
+      <h1 style={titleStyle}>Hello, world!</h1>
+
+    </div>
+
+  );
+
+};
+
+
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+root.render(<MyComponent />);

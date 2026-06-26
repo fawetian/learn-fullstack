@@ -1,0 +1,148 @@
+/*
+ * ============================================================
+ * 章节: React 博客项目：JSX
+ * 文件: react/runoob/34-blog-jsx/example_6.css
+ * ============================================================
+ * 说明: 样式文件，类似 Go 项目中 static/css/ 下的资源文件
+ * ============================================================
+ */
+
+.section-title {
+
+  font-size: 24px;
+
+  margin-bottom: 20px;
+
+  color: #333;
+
+}
+
+
+
+.article-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
+  gap: 24px;
+
+}
+
+
+
+.article-card {
+
+  background: #fff;
+
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  cursor: pointer;
+
+}
+
+
+
+.article-card:hover {
+
+  transform: translateY(-4px);
+
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+
+}
+
+
+
+.card-cover {
+
+  width: 100%;
+
+  height: 180px;
+
+  object-fit: cover;
+
+}
+
+
+
+.card-content {
+
+  padding: 16px;
+
+}
+
+
+
+.card-category {
+
+  display: inline-block;
+
+  padding: 2px 10px;
+
+  background: #e3f2fd;
+
+  color: #1976d2;
+
+  border-radius: 12px;
+
+  font-size: 12px;
+
+  margin-bottom: 8px;
+
+}
+
+
+
+.card-title {
+
+  font-size: 18px;
+
+  margin-bottom: 8px;
+
+  color: #222;
+
+}
+
+
+
+.card-summary {
+
+  font-size: 14px;
+
+  color: #666;
+
+  line-height: 1.6;
+
+  margin-bottom: 12px;
+
+}
+
+
+
+.card-date {
+
+  font-size: 12px;
+
+  color: #999;
+
+}
+
+
+
+.empty-tip {
+
+  text-align: center;
+
+  color: #999;
+
+  padding: 60px 0;
+
+  font-size: 16px;
+
+}
