@@ -1,0 +1,24 @@
+<!--
+  ============================================================
+  【第 38 节 · DOM 事件】demo3.html
+  ============================================================
+
+  【知识点 / 后端类比】
+  addEventListener 注册事件监听(推荐，优于 onclick 属性)。事件流：捕获→目标→冒泡。
+  后端类比：addEventListener ≈ 订阅消息/注册多个监听器；事件冒泡≈事件向上传播。
+
+  【运行方式】浏览器打开本文件即可。
+-->
+<!DOCTYPE html><html>
+<head>
+<script>
+    function changetext(id)  // 函数声明（会提升 hoisting）
+{
+    id.innerHTML="Ooops!";  // 设置元素内部 HTML 内容（会重新解析 HTML）
+}
+</script>
+</head>
+<body>
+<h1 onclick="changetext(this)">点击文本!</h1>
+</body>
+</html>

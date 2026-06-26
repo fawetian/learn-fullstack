@@ -1,0 +1,26 @@
+<!--
+  ============================================================
+  【第 52 节 · JavaScript Window History】demo2.html
+  ============================================================
+
+  【知识点 / 后端类比】
+  history 管理浏览历史：back()/forward()/go(n)。SPA 单页应用用 pushState。
+  后端类比：≈ 浏览器的前进/后退栈。
+
+  【运行方式】浏览器打开本文件即可。
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+    function goForward()  // 函数声明（会提升 hoisting）
+{
+    window.history.forward()  // window 是浏览器全局对象（BOM 核心）
+}
+</script>
+</head>
+<body>
+<input type="button" value="Forward" onclick="goForward()">
+</body>
+</html>

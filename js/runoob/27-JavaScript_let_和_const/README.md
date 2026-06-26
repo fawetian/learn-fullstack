@@ -1,0 +1,39 @@
+# JavaScript let 和 const
+
+本节共 32 个代码示例（按教程出现顺序编号）。
+
+代码文件：
+- `demo1.js`
+- `demo2.js`
+- `demo3.js`
+- `demo4.js`
+- `demo5.js`
+- `demo6.js`
+- `demo7.js`
+- `demo8.js`
+- `demo9.js`
+- `demo10.js`
+- `demo11.js`
+- `demo12.js`
+- `demo13.js`
+- `demo14.js`
+- `demo15.js`
+- `demo16.js`
+- `demo17.js`
+- `demo18.js`
+- `demo19.js`
+- `demo20.js`
+- `demo21.js`
+- `demo22.js`
+- `demo23.js`
+- `demo24.js`
+- `demo25.js`
+- `demo26.js`
+- `demo27.js`
+- `demo28.js`
+- `demo29.js`
+- `demo30.js`
+- `demo31.js`
+- `demo32.js`
+
+> .html 文件可直接用浏览器打开运行；.js 文件可用 node 运行或嵌入 html 查看。

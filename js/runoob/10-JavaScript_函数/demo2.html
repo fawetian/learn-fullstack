@@ -1,0 +1,20 @@
+<!--
+  ============================================================
+  【第 10 节 · JavaScript 函数】demo2.html
+  ============================================================
+
+  【知识点 / 后端类比】
+  function 声明函数；函数是【一等公民】(可赋值/传参/返回)。
+  后端类比(重点)：比 Java8 之前的“方法只能挂类上”灵活；≈ Java8 Lambda / Go func 当值用。
+  JS 【没有函数重载】(同名后定义覆盖前定义)，靠 arguments 数量分支。
+  函数声明会【提升 hoisting】。
+
+  【运行方式】浏览器打开本文件即可。
+-->
+<p>点击这个按钮，来调用带参数的函数。</p>
+<button onclick="myFunction('Harry Potter','Wizard')">点击这里</button>
+<script>
+    function myFunction(name,job){  // 函数声明（会提升 hoisting）
+    alert("Welcome " + name + ", the " + job);  // 浏览器弹窗（模态、阻塞），调试用，正式项目少用
+}
+</script>

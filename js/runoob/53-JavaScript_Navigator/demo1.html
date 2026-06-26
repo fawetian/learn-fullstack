@@ -1,0 +1,20 @@
+<!--
+  ============================================================
+  【第 53 节 · JavaScript Navigator】demo1.html
+  ============================================================
+
+  【知识点 / 后端类比】
+  navigator 提供浏览器信息：userAgent(浏览器标识)、language、platform 等。常用于判断环境。
+
+  【运行方式】浏览器打开本文件即可。
+-->
+<script>
+txt = "<p>浏览器代号: " + navigator.appCodeName + "</p>";
+txt+= "<p>浏览器名称: " + navigator.appName + "</p>";
+txt+= "<p>浏览器版本: " + navigator.appVersion + "</p>";
+txt+= "<p>启用Cookies: " + navigator.cookieEnabled + "</p>";
+txt+= "<p>硬件平台: " + navigator.platform + "</p>";
+txt+= "<p>用户代理: " + navigator.userAgent + "</p>";
+txt+= "<p>用户代理语言: " + navigator.language + "</p>";
+    document.getElementById("example").innerHTML=txt;  // 按 id 查找 DOM 元素（id≈主键），返回该节点
+</script>

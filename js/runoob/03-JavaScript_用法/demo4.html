@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  【第 03 节 · JavaScript 用法】demo4：<script> 放在 <body> 底部（推荐做法）
+  ============================================================
+
+  【和 demo3 的区别】demo3 把 <script> 放 <head>，本 demo 放 <body> 【最下面】。
+
+  【为什么要放底部？—— 性能】
+    - 浏览器遇到 <script> 会【阻塞 HTML 解析】去下载+执行 JS（旧机制）。
+    - 放 <head>：JS 下载/执行期间，页面是【白屏】的，用户看到内容更慢。
+    - 放 <body> 底部：先让【HTML 全部渲染完】，用户先看到页面，再加载 JS。
+    - 这是前端性能优化的【经典经验法则】，现代项目普遍这么做。
+
+  【为什么这里 onclick 仍能用？—— hoisting】
+    - 按钮 onclick 触发是在【用户点击时】，那时 <script> 早已执行完，
+      myFunction 已经定义好了，所以没问题。
+    - 即真正调用发生在“未来”，函数定义在前，顺序 OK。
+
+  【现代写法补充】（了解即可）
+    - 现在常用 <script defer>（延迟执行）放 <head> 里，效果类似放底部，
+      且不阻塞渲染，这是更现代的方案。
+
+  【运行方式】浏览器打开本文件 → 点按钮 → 段落文字被替换（效果同 demo3）。
+-->
+<html>
+<body>
+<h1>我的 Web 页面</h1>
+<p id="demo">一个段落</p>
+<button type="button" onclick="myFunction()">尝试一下</button>
+<!-- 把 script 放在 body 末尾：让页面内容先渲染，提升首屏速度 -->
+<script>
+function myFunction()
+{
+    document.getElementById("demo").innerHTML="我的第一个 JavaScript 函数";
+}
+</script>
+</body>
+</html>

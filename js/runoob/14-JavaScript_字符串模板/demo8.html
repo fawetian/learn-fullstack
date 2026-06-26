@@ -1,0 +1,20 @@
+<!--
+  ============================================================
+  【第 14 节 · JavaScript 字符串模板】demo8.html
+  ============================================================
+
+  【知识点 / 后端类比】
+  反引号 ` + ${表达式} 实现插值，支持多行。
+  后端类比：≈ Python f-string / Java String.format / Go fmt.Sprintf，但更直观，无需 %s/%d 格式符。
+  ${} 里可放任意表达式(运算、函数调用)。
+
+-->
+let header = "";
+let tags = ["RUNOOB", "GOOGLE", "TAOBAO"];
+
+let html = `<h2>${header}</h2><ul>`;
+for (const x of tags) {
+  html += `<li>${x}</li>`;
+}
+
+html += `</ul>`;

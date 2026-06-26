@@ -1,0 +1,28 @@
+<!--
+  ============================================================
+  【第 37 节 · DOM CSS】demo1.html
+  ============================================================
+
+  【知识点 / 后端类比】
+  用 element.style.属性 改样式。className/classList 改类名。
+  后端类比：操作元素的“表现层属性”，类似改配置项触发重新渲染。
+
+  【运行方式】浏览器打开本文件即可。
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+</head>
+<body>
+<p id="p1">Hello World!</p>
+<p id="p2">Hello World!</p>
+<script>
+    document.getElementById("p2").style.color="blue";  // 按 id 查找 DOM 元素（id≈主键），返回该节点
+    document.getElementById("p2").style.fontFamily="Arial";  // 按 id 查找 DOM 元素（id≈主键），返回该节点
+    document.getElementById("p2").style.fontSize="larger";  // 按 id 查找 DOM 元素（id≈主键），返回该节点
+</script>
+<p>以上段落通过脚本修改。</p>
+</body>
+</html>

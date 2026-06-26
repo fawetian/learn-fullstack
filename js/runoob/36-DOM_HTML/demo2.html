@@ -1,0 +1,19 @@
+<!--
+  ============================================================
+  【第 36 节 · DOM HTML】demo2.html
+  ============================================================
+
+  【知识点 / 后端类比】
+  用 JS 改 HTML 内容：innerHTML、textContent、getElementById 等。
+  后端类比：≈ 在服务端修改模板变量，但这里是【运行时改浏览器里的 DOM 节点】。
+
+  【运行方式】浏览器打开本文件即可。
+-->
+<html>
+<body>
+<p id="p1">Hello World!</p>
+<script>
+    document.getElementById("p1").innerHTML="新文本!";  // 按 id 查找 DOM 元素（id≈主键），返回该节点
+</script>
+</body>
+</html>
