@@ -1,0 +1,37 @@
+/**
+ * 章节: Props 属性
+ * 来源: 15-props/example_9.jsx —— ⚠️ 使用已废弃的 React.createClass，且依赖旧版 PropTypes 写法
+ */
+export const title = "Props 属性 · example_9 (源码展示)";
+export const sourceFile = "15-props/example_9.jsx";
+export const isSourceOnly = true;
+export const sourceCode = `/**
+ * ============================================================
+ * 章节: React Props（属性）
+ * 文件: react/runoob/15-props/example_9.jsx
+ * ============================================================
+ * 核心概念速查（Go 后端开发者视角）:
+ * - 组件 ≈ Go 的函数/方法，接收 props（类似参数）返回 UI（类似字符串渲染）
+ * - JSX ≈ Go 的 html/template，在代码中写 HTML 语法，编译为 JS 对象
+ * - State ≈ 闭包捕获的变量，变化触发组件重新执行（类似函数重入）
+ * - 虚拟 DOM ≈  diff 算法，只更新变化的节点（类似 git diff 后 patch）
+ * - Hooks ≈ 闭包 + 函数组合，useState 像返回 (value, setter) 的函数
+ * ============================================================
+ */
+
+var title = "菜鸟教程";
+// var title = 123;
+var MyTitle = React.createClass({
+  propTypes: {
+    title: React.PropTypes.string.isRequired,
+  },
+ 
+  render: function() {
+     return <h1> {this.props.title} </h1>;
+   }
+});
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+    <MyTitle title={title} />
+);`;
+export function mount() {}

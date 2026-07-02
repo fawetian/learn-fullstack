@@ -1,0 +1,22 @@
+.demo-runner {
+  width: 100%;
+}
+.demo-container {
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 8px;
+  min-height: 120px;
+  color: #222;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+.demo-error {
+  padding: 1rem 1.5rem;
+  background: #fff3f3;
+  border-left: 4px solid #e53935;
+  color: #b71c1c;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
